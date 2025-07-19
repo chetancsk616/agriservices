@@ -30,6 +30,7 @@ body {
   height: 60px;
   width: 100%;
   position: fixed;
+  z-index: 10;
   top: 0;
   left: 0;
 }
@@ -88,9 +89,9 @@ body {
 
 .scroll {
   margin-top: 60px;
-  margin-bottom: 208px;
-  height: calc(100vh - 60px);
   padding: 10px;
+  padding-bottom: 150px;
+  height: calc(100vh - 60px); 
 }
 
 .scroll1 {
@@ -330,6 +331,7 @@ body {
   background: rgba(255, 255, 255, 0.1);
   text-align: center;
   position: fixed;
+  z-index: 10;
   bottom: 0;
   left: 0;
   width: 100%;
