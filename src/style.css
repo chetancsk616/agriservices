@@ -90,7 +90,7 @@ body {
 .scroll {
   margin-top: 60px;
   padding: 10px;
-  padding-bottom: 150px;
+  padding-bottom: 120px;
   height: calc(100vh - 60px); 
 }
 
