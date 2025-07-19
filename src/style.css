@@ -3,7 +3,6 @@ body, html {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: hidden;
   color: #ffffff;
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -90,7 +89,7 @@ body {
 .scroll {
   margin-top: 60px;
   margin-bottom: 208px;
-  height: calc(100vh - 290px);
+  height: calc(100vh - 60px);
   padding: 10px;
 }
 
@@ -335,7 +334,7 @@ body {
   left: 0;
   width: 100%;
   height: fit-content;
-  pading: 10px;
+  padding: 10px;
 }
 
 .aboutus {
