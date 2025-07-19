@@ -163,7 +163,7 @@ body {
   }
 
   .hedder button {
-    min-width: 80px; /* Give buttons a fixed min-width on mobile */
+    min-width: 60px; /* Give buttons a fixed min-width on mobile */
   }
 }
 
