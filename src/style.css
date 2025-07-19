@@ -384,3 +384,9 @@ a {
   border-radius: 8px;
   text-align: center;
 }
+
+@media (max-width: 768px) {
+  .hedder {
+    justify-content: center;
+  }
+}
