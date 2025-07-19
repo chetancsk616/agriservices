@@ -1,0 +1,386 @@
+/* Reset and Base Styles */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  color: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background: linear-gradient(to right, #141e30, #243b55);
+  display: flex;
+  flex-direction: column;
+}
+
+@font-face {
+  font-family: 'Boucherie Block';
+  src: url('fonts/Boucherie\ Block.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Header */
+.hedder {
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(8px);
+  height: 60px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.hedder button {
+  border: none;
+  height: 60px;
+  background: transparent;
+  color: #ffffff;
+  min-width: 8vw;
+}
+
+.hedder button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Common Glassy Box Styling */
+.popup-overlay,
+.box {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(134, 141, 240, 0.37);
+}
+
+.popup-overlay {
+  color: black;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.popup-box {
+  background: white;
+  padding: 20px 30px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.back {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.scroll,
+.scroll1 {
+  overflow: auto;
+  scrollbar-width: none;
+}
+
+.scroll {
+  margin-top: 60px;
+  margin-bottom: 208px;
+  height: calc(100vh - 290px);
+  padding: 10px;
+}
+
+.scroll1 {
+  height: calc(100vh - 5vh);
+}
+
+/* Card Backgrounds */
+.a1 { background-image: url('/images/tractor.jpg'); }
+.a2 { background-image: url('/images/delivary.jpg'); }
+.a3 { background-image: url('/images/health-care.png'); }
+.a4 { background-image: url('/images/marchent.jpg'); }
+
+.a1, .a2, .a3, .a4,
+.signup1, .signup2,
+.login1, .login2 {
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  border: outset #000 4px;
+  transition: transform 0.3s ease;
+  height: 281.5px;
+  width: 450.1px;
+  text-align: center;
+  font-size: 30pt;
+}
+
+.a1:hover, .a2:hover, .a3:hover, .a4:hover,
+.signup1:hover, .signup2:hover,
+.login1:hover, .login2:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 32px 0 rgba(134, 141, 240, 0.37);
+}
+
+.signup1 {
+  background-image: url('/images/2.jpg');
+  color: #e0c93a;
+}
+
+.signup2 {
+  background-image: url('/images/1.jpg');
+  color: #42d385;
+}
+
+.login1 {
+  background-image: url('/images/farmer1.jpg');
+  color: black;
+}
+
+.login2 {
+  background-image: url('/images/seller.jpg');
+  color: #cf640c;
+}
+
+/* Responsive */
+@media (max-width: 455px) {
+  .login1, .login2, .a1, .a2, .a3, .a4, .signup1, .signup2 {
+    width: 98vw;
+  }
+}
+
+/* Text Styles */
+.our, .services {
+  font-family: 'Boucherie Block', sans-serif;
+  color: #e0e0e0;
+  font-size: 4vw;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.vehicle, .Pesticides, .Crop, .Merchant {
+  font-family: 'Crimson Pro', serif;
+  font-size: 30pt;
+  margin: 0;
+  padding: 0;
+}
+
+.booking, .order, .HEALTH-CARE, .LOGIN {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 50pt;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+/* Layout Utilities */
+.b, .s, .l, .select {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.c { display: flex; justify-content: center; }
+.d { text-align: center; }
+.f, .li { margin: 0; line-height: 1;font-family: 'Barlow Condensed', sans-serif; }
+.vid { display: flex; flex-direction: column; align-items: center; }
+
+/* Language Headings */
+.h {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  font-family: 'Noto Sans', Arial, sans-serif;
+  font-weight: 700;
+  text-align: center;
+}
+
+.h.en { font-family: 'Noto Sans', Arial, sans-serif; }
+.h.te { font-family: 'Noto Sans Telugu', Arial, sans-serif; }
+.h.hi { font-family: 'Noto Sans Devanagari', Arial, sans-serif; }
+.h.ta { font-family: 'Noto Sans Tamil', Arial, sans-serif; }
+
+/* UI Boxes and Cards */
+.box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 20vw;
+  padding: 100px;
+  gap: 2vw;
+  border-radius: 10px;
+  border: solid black;
+  margin: 2vh auto 0;
+}
+
+.box input {
+  width: 20vw;
+  height: 1.8vw;
+  border-radius: 10px;
+  padding: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #e0e0e0;
+}
+
+.box button {
+  background-color: navy;
+  color: white;
+}
+
+.box h1 { text-align: center; }
+
+.card1 {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 10px;
+  overflow: auto;
+  padding: 10px;
+}
+
+.card2 {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(to right, #141e30, #243b55);
+  padding-top: 20px;
+  gap: 20px;
+}
+
+.card2 input,
+.card2 button {
+  margin: 0 auto;
+  width: 50vw;
+}
+
+.card {
+  position: relative;
+  box-shadow: 0 8px 32px 0 rgba(134, 141, 240, 0.37);
+  width: 24vw;
+  height: 25vw;
+  margin: auto;
+  text-align: center;
+  background-color: white;
+  padding: 10px;
+  font-family: Arial;
+}
+
+.btn1 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 10%;
+  color: white;
+  background-color: navy;
+  border: none;
+}
+
+.btn1:hover { opacity: 0.7; }
+
+/* Sidebar */
+.profile {
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: linear-gradient(to right, #141e30, #243b55);
+  color: #e0e0e0;
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  color: #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 15vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar button {
+  border: none;
+  padding: 10px;
+  width: 15vw;
+  background-color: transparent;
+  color: #e0e0e0;
+}
+
+.sidebar button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Footer */
+.footer {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 206.316px;
+}
+
+.aboutus {
+  color: rgb(14, 85, 4);
+  background-color: rgba(255, 255, 255, 0.608);
+  padding: 10px;
+  border-radius: 20px;
+}
+
+.lang {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(14, 85, 4);
+  border-radius: 10px;
+  border: outset black 4px;
+  color: white;
+  width: 20.833vw;
+}
+
+.sound {
+  height: 30px;
+  width: 30px;
+}
+
+a {
+  text-decoration: none;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-box {
+  background: white;
+  color: black;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
