@@ -47,7 +47,7 @@ body {
   -webkit-backdrop-filter: blur(8px);
   height: 60px;
   padding: 0 1rem;
-  flex-shrink: 0; /* Prevents header from shrinking */
+  flex-shrink: 4; /* Prevents header from shrinking */
 }
 
 .hedder button {
