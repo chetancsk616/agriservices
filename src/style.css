@@ -161,7 +161,6 @@ body {
 @media (max-width: 768px) {
   .hedder {
     justify-content: center; /* Center header items on mobile */
-    overflow-x: auto; /* Allow header to scroll if items overflow */
   }
 
   .hedder button {
