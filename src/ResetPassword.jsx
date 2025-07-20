@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '/src/supabaseClient';
+import { LanguageContext } from './LanguageContext.jsx';
+import { translateText } from './translationService.js';
+import Translate from './Translation.jsx';
 
 // Reusable Popup
 const Popup = ({ message, onClose, navigateTo }) => {
@@ -19,7 +22,7 @@ const Popup = ({ message, onClose, navigateTo }) => {
     <div className="popup-overlay">
       <div className="popup-box">
         <p>{message}</p>
-        <button onClick={handleClose}>OK</button>
+        <button onClick={handleClose}><Translate>OK</Translate></button>
       </div>
     </div>
   );
@@ -29,11 +32,24 @@ const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState('');
   const [popupMessage, setPopupMessage] = useState('');
   const [popupNav, setPopupNav] = useState(null);
+  const [placeholder, setPlaceholder] = useState('New password');
   const navigate = useNavigate();
+  const { language } = useContext(LanguageContext);
+
+  // Translate placeholder
+  useEffect(() => {
+    const translatePlaceholder = async () => {
+        const translated = await translateText('New password', language);
+        setPlaceholder(translated);
+    };
+    translatePlaceholder();
+  }, [language]);
+
 
   const handleReset = async () => {
     if (!newPassword.trim()) {
-      setPopupMessage('Please enter a new password.');
+      const msg = await translateText('Please enter a new password.', language);
+      setPopupMessage(msg);
       return;
     }
 
@@ -42,10 +58,12 @@ const ResetPassword = () => {
     });
 
     if (error) {
-      setPopupMessage('Failed to update password: ' + error.message);
+      const prefix = await translateText('Failed to update password: ', language);
+      setPopupMessage(prefix + error.message);
     } else {
-      setPopupMessage('Password updated successfully!');
-      setPopupNav('/login'); // Redirect to login
+      const msg = await translateText('Password updated successfully!', language);
+      setPopupMessage(msg);
+      setPopupNav('/main/3'); // Redirect to login page
     }
   };
 
@@ -55,7 +73,9 @@ const ResetPassword = () => {
     justifyContent: 'center',
     alignItems: 'center',
     height: '100vh',
-    background: '#f3f3f3',
+    padding: '1rem',
+    background: 'linear-gradient(to right, #141e30, #243b55)',
+    color: '#333'
   };
 
   const boxStyle = {
@@ -63,15 +83,18 @@ const ResetPassword = () => {
     padding: '2rem',
     borderRadius: '10px',
     boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-    width: '300px',
+    width: '100%',
+    maxWidth: '400px',
+    textAlign: 'center'
   };
 
   const inputStyle = {
     width: '100%',
-    margin: '0.5rem 0',
+    margin: '1rem 0',
     padding: '0.75rem',
     border: '1px solid #ccc',
     borderRadius: '5px',
+    fontSize: '1rem'
   };
 
   const buttonStyle = {
@@ -80,6 +103,7 @@ const ResetPassword = () => {
     color: 'white',
     fontWeight: 'bold',
     cursor: 'pointer',
+    border: 'none'
   };
 
   return (
@@ -87,23 +111,23 @@ const ResetPassword = () => {
       <div style={boxStyle}>
         <button
           type="button"
-          style={{ width: 'fit-content', backgroundColor: 'white', border: 'outset' }}
+          style={{ width: 'fit-content', background: 'none', border: 'none', float: 'left', fontSize: '24px' }}
           onClick={() => navigate(-1)}
         >
-          <span style={{ fontSize: '30px', color: 'black' }}>&larr;</span>
+          <span style={{ color: 'black' }}>&larr;</span>
         </button>
 
-        <h2>Reset Your Password</h2>
+        <h2><Translate>Reset Your Password</Translate></h2>
         <input
           type="password"
           id="newPassword"
-          placeholder="New password"
+          placeholder={placeholder}
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           style={inputStyle}
         />
         <button id="resetBtn" onClick={handleReset} style={buttonStyle}>
-          Update Password
+          <Translate>Update Password</Translate>
         </button>
       </div>
 
