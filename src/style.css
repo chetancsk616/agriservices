@@ -2,7 +2,13 @@
 * {
   box-sizing: border-box;
 }
-
+.sound {
+  background: url('/images/beeping.jpg') no-repeat;
+  background-size: cover;
+  /* You can keep height and width here or in the old .sound class */
+  height: 30px;
+  width: 30px;
+}
 body, html {
   margin: 0;
   padding: 0;
