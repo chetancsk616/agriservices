@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '/src/supabaseClient';
+import { LanguageContext } from './LanguageContext.jsx';
+import { translateText } from './translationService.js';
+import Translate from './Translation.jsx';
 
 const Popup = ({ message, onClose, navigateTo }) => {
   const navigate = useNavigate();
@@ -27,12 +30,14 @@ const Cart = () => {
   const [popupMessage, setPopupMessage] = useState('');
   const [popupNav, setPopupNav] = useState(null);
   const navigate = useNavigate();
+  const { language } = useContext(LanguageContext);
 
   const loadCart = async () => {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      setPopupMessage('Please login to view your cart.');
+      const msg = await translateText('Please login to view your cart.', language);
+      setPopupMessage(msg);
       setPopupNav("/main/3");
       return;
     }
@@ -45,7 +50,6 @@ const Cart = () => {
 
     if (cartError || !cart || !cart.product_id?.length) {
       setCartData(null);
-      setPopupMessage("Cart is empty or failed to load.");
       return;
     }
 
@@ -55,11 +59,11 @@ const Cart = () => {
       .in('id', cart.product_id);
 
     if (prodErr) {
-      setPopupMessage("Error loading products.");
+      const msg = await translateText("Error loading products.", language);
+      setPopupMessage(msg);
       return;
     }
 
-    // Optional: sort `prod` to match the order in cart.product_id
     const sortedProducts = cart.product_id.map(pid => prod.find(p => p.id === pid));
 
     setCartData(cart);
@@ -75,7 +79,10 @@ const Cart = () => {
       .update({ product_id: newProductIds, quantity: newQuantities })
       .eq('user_id', user.id);
 
-    if (error) setPopupMessage("Update failed: " + error.message);
+    if (error) {
+        const msg = await translateText("Update failed: ", language);
+        setPopupMessage(msg + error.message);
+    }
   };
 
   const handleQuantityChange = async (index, delta) => {
@@ -123,31 +130,31 @@ const Cart = () => {
       >
         &larr;
       </button>
-      <h1 style={{ textAlign: 'center', color: 'white' }}>Your Cart</h1>
+      <h1 style={{ textAlign: 'center', color: 'white' }}><Translate>Your Cart</Translate></h1>
 
       <div id="cart-container" style={containerStyle}>
         {cartData === null ? (
-          <p style={{ color: 'white' }}>Your cart is empty or failed to load.</p>
+          <p style={{ color: 'white', gridColumn: '1 / -1', textAlign: 'center' }}><Translate>Your cart is empty.</Translate></p>
         ) : (
           products.map((p, i) => (
             <div className="cart-item" style={itemStyle} key={p.id}>
               <h3>{p.name}</h3>
-              <p>Price: ₹{p.price}</p>
+              <p><Translate>Price:</Translate> ₹{p.price}</p>
               <p>
-                Quantity:&nbsp;
+                <Translate>Quantity:</Translate>&nbsp;
                 <button onClick={() => handleQuantityChange(i, -1)}>-</button>&nbsp;
                 <span>{cartData.quantity[i]}</span>&nbsp;
                 <button onClick={() => handleQuantityChange(i, 1)}>+</button>
               </p>
-              <p>Total: ₹{p.price * cartData.quantity[i]}</p>
+              <p><Translate>Total:</Translate> ₹{p.price * cartData.quantity[i]}</p>
             </div>
           ))
         )}
       </div>
 
-      {cartData && (
-        <div className="cart-total" style={{ marginLeft: '20px', marginTop: '20px', fontWeight: 'bold', color: 'white' }}>
-          Total Price: ₹{total}
+      {cartData && products.length > 0 && (
+        <div className="cart-total" style={{ padding: '20px', fontWeight: 'bold', color: 'white', fontSize: '1.2rem' }}>
+          <Translate>Total Price:</Translate> ₹{total}
         </div>
       )}
 
