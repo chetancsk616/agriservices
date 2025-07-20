@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './style.css';
 import supabase from '/src/supabaseClient';
+import { LanguageContext } from './LanguageContext.jsx';
+import { translateText } from './translationService.js';
+import Translate from './Translation.jsx';
 
 const Popup = ({ message, onClose, navigateTo }) => {
   const navigate = useNavigate();
@@ -19,7 +22,7 @@ const Popup = ({ message, onClose, navigateTo }) => {
     <div className="popup-overlay">
       <div className="popup-box">
         <p>{message}</p>
-        <button onClick={handleClose}>OK</button>
+        <button onClick={handleClose}><Translate>OK</Translate></button>
       </div>
     </div>
   );
@@ -34,7 +37,26 @@ const MerchantSignup = () => {
   });
   const [popupMessage, setPopupMessage] = useState('');
   const [popupNav, setPopupNav] = useState(null);
+  const [placeholders, setPlaceholders] = useState({
+    name: 'Name',
+    phone: 'Phone Number',
+    email: 'Email',
+    password: 'Password'
+  });
   const navigate = useNavigate();
+  const { language } = useContext(LanguageContext);
+
+  // Translate placeholders
+  useEffect(() => {
+    const translatePlaceholders = async () => {
+      const tName = await translateText('Name', language);
+      const tPhone = await translateText('Phone Number', language);
+      const tEmail = await translateText('Email', language);
+      const tPassword = await translateText('Password', language);
+      setPlaceholders({ name: tName, phone: tPhone, email: tEmail, password: tPassword });
+    };
+    translatePlaceholders();
+  }, [language]);
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.id]: e.target.value }));
@@ -44,7 +66,8 @@ const MerchantSignup = () => {
     const { name, phone, email, password } = form;
 
     if (!email || !password) {
-      setPopupMessage('Email and password are required');
+      const msg = await translateText('Email and password are required', language);
+      setPopupMessage(msg);
       return;
     }
 
@@ -61,14 +84,16 @@ const MerchantSignup = () => {
     });
 
     if (error) {
-      setPopupMessage('Signup failed: ' + error.message);
+      const prefix = await translateText('Signup failed: ', language);
+      setPopupMessage(prefix + error.message);
       return;
     }
 
     const user = data?.user;
 
     if (!user) {
-      setPopupMessage('Signup successful but user data is missing.');
+      const msg = await translateText('Signup successful but user data is missing.', language);
+      setPopupMessage(msg);
       return;
     }
 
@@ -81,11 +106,13 @@ const MerchantSignup = () => {
 
     if (cartError) {
       console.error('Cart creation failed:', cartError);
-      setPopupMessage('Signup succeeded, but cart setup failed. Try again later.');
+      const msg = await translateText('Signup succeeded, but cart setup failed. Try again later.', language);
+      setPopupMessage(msg);
       return;
     }
 
-    setPopupMessage('Signup successful as merchant! Please confirm your email.');
+    const successMsg = await translateText('Signup successful as merchant! Please confirm your email.', language);
+    setPopupMessage(successMsg);
     setPopupNav('/merchantlogin');
   };
 
@@ -96,62 +123,61 @@ const MerchantSignup = () => {
           type="button"
           style={{
             color: "white",
-            width: "20vw",
+            width: "100%",
             backgroundColor: "rgba(255, 255, 255, 0)",
-            border: "outset rgba(255, 255, 255, 0)",
+            border: "none",
             textAlign: "left",
-            fontSize: "20px"
+            fontSize: "30px"
           }}
           onClick={() => navigate(-1)}
         >
           &larr;
         </button>
-  
-        <h1>Merchant Signup</h1>
-  
+
+        <h1><Translate>Merchant Signup</Translate></h1>
+
         <input
           type="text"
           id="name"
-          placeholder="Name"
+          placeholder={placeholders.name}
           value={form.name}
           onChange={handleChange}
         />
         <input
           type="text"
           id="phone"
-          placeholder="Phone Number"
+          placeholder={placeholders.phone}
           value={form.phone}
           onChange={handleChange}
         />
         <input
           type="email"
           id="email"
-          placeholder="Email"
+          placeholder={placeholders.email}
           value={form.email}
           onChange={handleChange}
         />
         <input
           type="password"
           id="password"
-          placeholder="Password"
+          placeholder={placeholders.password}
           value={form.password}
           onChange={handleChange}
         />
-  
-        <button type="button" onClick={handleSignup}>Submit</button>
-  
+
+        <button type="button" onClick={handleSignup}><Translate>Submit</Translate></button>
+
         <p>
-          Existing User?{' '}
+          <Translate>Existing User?</Translate>{' '}
           <span
-            style={{ color: 'blue', cursor: 'pointer' }}
+            style={{ color: '#add8e6', cursor: 'pointer', textDecoration: 'underline' }}
             onClick={() => navigate('/merchantlogin')}
           >
-            LogIn
+            <Translate>LogIn</Translate>
           </span>
         </p>
       </form>
-  
-      {/* ✅ Popup moved outside of the scrollable form */}
+
       <Popup
         message={popupMessage}
         onClose={() => {
@@ -161,7 +187,7 @@ const MerchantSignup = () => {
         navigateTo={popupNav}
       />
     </>
-  );  
+  );
 };
 
 export default MerchantSignup;
