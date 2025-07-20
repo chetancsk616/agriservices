@@ -99,14 +99,15 @@ const Cart = () => {
 
   const containerStyle = {
     padding: '20px',
-    fontFamily: 'Arial, sans-serif',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+    gap: '20px',
   };
 
   const itemStyle = {
     border: '1px solid #ccc',
     borderRadius: '8px',
     padding: '10px',
-    margin: '10px 0',
     backgroundColor: 'rgba(255, 255, 255, 0.07)',
     color: 'white',
   };
