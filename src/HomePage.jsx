@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import Translate from './Translate';
 import './style.css';
 
 const HomePage = () => {
@@ -14,7 +15,7 @@ const HomePage = () => {
         return (
           <div className="back">
             <div className="vid">
-              <h1 className="our" id="8">Guide</h1>
+              <h1 className="our" id="8"><Translate>Guide</Translate></h1>
               <video
                 height="342.9"
                 width="570"
@@ -32,12 +33,12 @@ const HomePage = () => {
           <div className="back">
             <div className="s">
               <div className="signup1" onClick={() => navigate('/farmersignup')}>
-                <h1 id="9" className='f'>Farmer</h1>
-                <h1 className='li'>SignUp</h1>
+                <h1 id="9" className='f'><Translate>Farmer</Translate></h1>
+                <h1 className='li'><Translate>SignUp</Translate></h1>
               </div>
               <div className="signup2" onClick={() => navigate('/merchantsignup')}>
-                <h1 id="text" className='f'>Merchant</h1>
-                <h1 className='li'>SignUp</h1>
+                <h1 id="text" className='f'><Translate>Merchant</Translate></h1>
+                <h1 className='li'><Translate>SignUp</Translate></h1>
               </div>
             </div>
           </div>
@@ -47,12 +48,12 @@ const HomePage = () => {
           <div className="back">
             <div className="l">
               <div className="login1" onClick={() => navigate('/farmerlogin')}>
-                <h1 id="10" className='f'>Farmer</h1>
-                <h1 className='li'>LogIn</h1>
+                <h1 id="10" className='f'><Translate>Farmer</Translate></h1>
+                <h1 className='li'><Translate>LogIn</Translate></h1>
               </div>
               <div className="login2" onClick={() => navigate('/merchantlogin')}>
-                <h1 id="11" className='f'>Merchant</h1>
-                <h1 className='li'>LogIn</h1>
+                <h1 id="11" className='f'><Translate>Merchant</Translate></h1>
+                <h1 className='li'><Translate>LogIn</Translate></h1>
               </div>
             </div>
           </div>
@@ -60,21 +61,21 @@ const HomePage = () => {
       case "4":
         return (
           <div className="back">
-            <h1 className="our" style={{ textAlign: "center" }} id="12">About Us</h1>
+            <h1 className="our" style={{ textAlign: "center" }} id="12"><Translate>About Us</Translate></h1>
             <div className="aboutus">
             <section id = "13">
-                <h2>Rooted in the Soil, Growing with Technology</h2>
-                <p>Every seed holds a promise. Every farmer holds a dream.</p>
-                <p>At <strong>AgriConnect</strong>, we exist to make those dreams easier to achieve.</p>
-                <p>We know the struggles of farmers—the early mornings, the uncertain skies, and the endless hard work.</p>
-                <p>That’s why we’ve built a platform where technology meets tradition, helping farmers connect with merchants, book vehicles, order pesticides, and care for their crops, all with a few simple clicks.</p>
-                <p>We stand by our farmers, offering them not just services, but support, trust, and hope.</p>
-                <p>Because when they succeed, the entire world grows a little brighter.</p>
+                <h2><Translate>Rooted in the Soil, Growing with Technology</Translate></h2>
+                <p><Translate>Every seed holds a promise. Every farmer holds a dream.</Translate></p>
+                <p><Translate>At </Translate><strong><Translate>AgriConnect</Translate></strong><Translate>, we exist to make those dreams easier to achieve.</Translate></p>
+                <p><Translate>We know the struggles of farmers—the early mornings, the uncertain skies, and the endless hard work.</Translate></p>
+                <p><Translate>That’s why we’ve built a platform where technology meets tradition, helping farmers connect with merchants, book vehicles, order pesticides, and care for their crops, all with a few simple clicks.</Translate></p>
+                <p><Translate>We stand by our farmers, offering them not just services, but support, trust, and hope.</Translate></p>
+                <p><Translate>Because when they succeed, the entire world grows a little brighter.</Translate></p>
               </section>
 
               <section id = "14">
-                <h2>By Farmers. For Farmers.</h2>
-                <p>At the heart of <strong>AgriConnect</strong> is a simple belief—farmers deserve better.</p>
+                <h2><Translate>By Farmers. For Farmers</Translate>.</h2>
+                <p><Translate>At the heart of </Translate><strong>AgriConnect</strong> is a simple belief—farmers deserve better.</p>
                 <p>Better access. Better support. Better lives.</p>
                 <p>Born from listening to the voices of farmers, our platform is designed to simplify their day-to-day struggles, offering them instant connections to vehicles, pesticides, crop health services, and merchants.</p>
                 <p>We aim to cut through the noise, giving farmers the power to make decisions faster, safer, and smarter.</p>
