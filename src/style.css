@@ -78,7 +78,7 @@ a {
   line-height: 1.6;
   flex-shrink: 0;
 }
-.footer p { /* This rule was in the original, keeping for consistency */
+.footer p {
   margin: 0;
 }
 
@@ -168,8 +168,8 @@ a {
   flex-direction: column;
   align-items: center;
   width: 90%;
-  max-width: 400px; /* Replaced vw with responsive units */
-  padding: 2rem;   /* Replaced huge 100px with scalable rem */
+  max-width: 400px;
+  padding: 2rem;
   gap: 1.5rem;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -180,7 +180,7 @@ a {
 }
 
 .box input {
-  width: 100%; /* Changed from vw to % */
+  width: 100%;
   height: 40px;
   border-radius: 8px;
   padding: 0 1rem;
@@ -218,7 +218,7 @@ a {
 .popup-overlay {
   color: black;
   position: fixed;
-  inset: 0; /* Modern way to write top/left/right/bottom: 0 */
+  inset: 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -239,7 +239,7 @@ a {
 @media (max-width: 768px) {
   .hedder {
     justify-content: center;
-    overflow-x: auto; /* Allows header to scroll if buttons overflow */
+    overflow-x: auto;
   }
 
   .hedder button {
@@ -247,4 +247,144 @@ a {
     padding: 0 0.5rem;
     white-space: nowrap;
   }
+}
+
+/*
+===================================================================
+  MISSING & LEGACY CLASSES ADDED FROM ORIGINAL STYLESHEET
+===================================================================
+*/
+
+.back {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.scroll1 {
+  overflow: auto;
+  scrollbar-width: none;
+  height: calc(100vh - 5vh);
+}
+
+.c {
+  display: flex;
+  justify-content: center;
+}
+
+/* Language Headings */
+.h {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  font-family: 'Noto Sans', Arial, sans-serif;
+  font-weight: 700;
+  text-align: center;
+}
+.h.en { font-family: 'Noto Sans', Arial, sans-serif; }
+.h.te { font-family: 'Noto Sans Telugu', Arial, sans-serif; }
+.h.hi { font-family: 'Noto Sans Devanagari', Arial, sans-serif; }
+.h.ta { font-family: 'Noto Sans Tamil', Arial, sans-serif; }
+
+/* Different Card & Grid Layouts */
+.card1 {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 10px;
+  overflow: auto;
+  padding: 10px;
+}
+
+.card2 {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(to right, #141e30, #243b55);
+  padding-top: 20px;
+  gap: 20px;
+}
+.card2 input,
+.card2 button {
+  margin: 0 auto;
+  width: 50vw;
+}
+
+.card {
+  position: relative;
+  box-shadow: 0 8px 32px 0 rgba(134, 141, 240, 0.37);
+  width: 24vw;
+  height: 25vw;
+  margin: auto;
+  text-align: center;
+  background-color: white;
+  padding: 10px;
+  font-family: Arial;
+}
+
+.btn1 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 10%;
+  color: white;
+  background-color: navy;
+  border: none;
+}
+.btn1:hover {
+  opacity: 0.7;
+}
+
+/* Sidebar */
+.profile {
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: linear-gradient(to right, #141e30, #243b55);
+  color: #e0e0e0;
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  color: #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 15vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar button {
+  border: none;
+  padding: 10px;
+  width: 15vw;
+  background-color: transparent;
+  color: #e0e0e0;
+}
+.sidebar button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Other UI Elements */
+.lang {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(14, 85, 4);
+  border-radius: 10px;
+  border: outset black 4px;
+  color: white;
+  width: 20.833vw;
+}
+
+.sound {
+  height: 30px;
+  width: 30px;
 }
