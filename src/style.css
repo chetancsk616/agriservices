@@ -12,6 +12,17 @@ body, html {
   background: linear-gradient(to right, #141e30, #243b55);
 }
 
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
 @font-face {
   font-family: 'Boucherie Block';
   src: url('/fonts/Boucherie Block.ttf') format('truetype');
@@ -19,22 +30,15 @@ body, html {
   font-style: normal;
 }
 
-/* --- Main Layout: Flexbox Powered --- */
-/* This structure makes the header/footer and content flow naturally */
-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh; /* Ensures footer is at the bottom even on short pages */
-}
-
+/* --- Main Layout Structure --- */
 .scroll {
-  flex-grow: 1; /* This makes the content area take all available space */
-  overflow-y: auto; /* Allows only the content to scroll */
-  padding: 1.5rem; /* Use rem for scalable spacing */
-  scrollbar-width: none; /* Hides scrollbar */
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  scrollbar-width: none; /* Firefox */
 }
 .scroll::-webkit-scrollbar {
-  display: none; /* Hides scrollbar for Chrome/Safari */
+  display: none; /* Chrome, Safari, and Opera */
 }
 
 /* --- Header --- */
@@ -47,6 +51,7 @@ body {
   -webkit-backdrop-filter: blur(8px);
   height: 60px;
   padding: 0 1rem;
+  flex-shrink: 0;
 }
 
 .hedder button {
@@ -70,15 +75,15 @@ body {
   background: rgba(255, 255, 255, 0.1);
   text-align: center;
   padding: 1.5rem;
-  flex-shrink: 0; /* Prevents footer from shrinking */
   line-height: 1.6;
+  flex-shrink: 0;
 }
-.footer p {
+.footer p { /* This rule was in the original, keeping for consistency */
   margin: 0;
 }
 
 /* --- Service Cards & Clickable Boxes --- */
-.b, .s, .l {
+.b, .s, .l, .select {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -100,11 +105,12 @@ body {
   border: outset #000 4px;
   transition: transform 0.3s ease;
   width: 100%;
-  max-width: 450px; /* Control max size on large screens */
-  aspect-ratio: 16 / 10; /* Maintain shape without fixed height */
+  max-width: 450px;
+  aspect-ratio: 16 / 10;
   text-align: center;
   color: white;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.7); /* Improves text readability */
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  cursor: pointer;
 }
 
 .a1:hover, .a2:hover, .a3:hover, .a4:hover,
@@ -114,7 +120,7 @@ body {
   box-shadow: 0 8px 32px 0 rgba(134, 141, 240, 0.37);
 }
 
-/* Card Backgrounds */
+/* Card-specific styles */
 .a1 { background-image: url('/images/tractor.jpg'); }
 .a2 { background-image: url('/images/delivary.jpg'); }
 .a3 { background-image: url('/images/health-care.png'); }
@@ -126,7 +132,6 @@ body {
 
 
 /* --- Typography --- */
-/* Using clamp for responsive font sizes that don't get too big or small */
 .our, .services {
   font-family: 'Boucherie Block', sans-serif;
   color: #e0e0e0;
@@ -139,15 +144,13 @@ body {
   font-family: 'Crimson Pro', serif;
   font-size: clamp(1.5rem, 4vw, 2.5rem);
   margin: 0;
-  padding: 0;
 }
 
 .booking, .order, .HEALTH-CARE, .LOGIN {
   font-family: 'Barlow Condensed', sans-serif;
   font-size: clamp(2.5rem, 8vw, 5rem);
-  margin: 0;
-  padding: 0;
   line-height: 1;
+  margin: 0;
 }
 
 .f, .li {
@@ -156,27 +159,92 @@ body {
   font-family: 'Barlow Condensed', sans-serif;
 }
 
-/* --- Responsive Adjustments --- */
-@media (max-width: 768px) {
-  .hedder {
-    justify-content: center; /* Center header items on mobile */
-  }
+/* --- General Containers & UI Elements --- */
+.d { text-align: center; }
+.vid { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
 
-  .hedder button {
-    min-width: 60px; /* Give buttons a fixed min-width on mobile */
-  }
+.box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  max-width: 400px; /* Replaced vw with responsive units */
+  padding: 2rem;   /* Replaced huge 100px with scalable rem */
+  gap: 1.5rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  margin: 2rem auto 0;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(134, 141, 240, 0.37);
 }
 
-/* Add other specific styles like popups, sidebars etc. here if needed */
-/* The styles below were less critical to the main layout issue */
+.box input {
+  width: 100%; /* Changed from vw to % */
+  height: 40px;
+  border-radius: 8px;
+  padding: 0 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  color: #e0e0e0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.box button {
+  background-color: navy;
+  color: white;
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+.box h1 { text-align: center; font-size: 1.5rem; }
 
 .aboutus {
-  color: rgb(14, 85, 4);
-  background-color: rgba(255, 255, 255, 0.8);
+  color: #333;
+  background-color: rgba(255, 255, 255, 0.9);
   padding: 1.5rem;
   border-radius: 20px;
   line-height: 1.7;
+  max-width: 800px;
+  margin: 0 auto;
 }
 .aboutus h2 {
-    margin-top: 0;
+  margin-top: 0;
+  color: #141e30;
+}
+
+/* --- Popups --- */
+.popup-overlay {
+  color: black;
+  position: fixed;
+  inset: 0; /* Modern way to write top/left/right/bottom: 0 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.popup-box {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  text-align: center;
+  width: 90%;
+  max-width: 500px;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+  .hedder {
+    justify-content: center;
+    overflow-x: auto; /* Allows header to scroll if buttons overflow */
+  }
+
+  .hedder button {
+    min-width: 70px;
+    padding: 0 0.5rem;
+    white-space: nowrap;
+  }
 }
