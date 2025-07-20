@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import Translate from './Translation';
 import './style.css';
 
 const HomePage = () => {
@@ -96,8 +97,8 @@ const HomePage = () => {
         return (
           <div className="back">
             <div className="d">
-              <h1 className="our" id="16">OUR</h1>
-              <h1 className="services" id="17">SERVICES</h1>
+              <h1 className="our" id="16"><Translate>OUR</Translate></h1>
+              <h1 className="services" id="17"><Translate>SERVICES</Translate></h1>
             </div>
             <div className="b">
               <div className="a1" onClick={() => navigate('/vehicles')}>
