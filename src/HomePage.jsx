@@ -18,8 +18,8 @@ const HomePage = () => {
               <h1 className="our"><Translate>Guide</Translate></h1>
               <video
                 controls
-                poster="/images/Screenshot 2025-05-13 200635.png"
-                style={{ border: "solid #000000 4px", borderRadius: "20px", borderStyle: "outset" }}
+                poster="/images/guide-poster.png"
+                className="guide-video"
               >
                 <source src="/videos/Marvel Studios' Avengers_ Endgame - Official Trailer.mp4" type="video/mp4" />
               </video>
