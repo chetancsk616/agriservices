@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '/src/supabaseClient';
+import { LanguageContext } from './LanguageContext.jsx';
+import { translateText } from './translationService.js';
+import Translate from './Translation.jsx';
 
 const Popup = ({ message, onClose, navigateTo, children, showConfirm }) => {
   const navigate = useNavigate();
@@ -22,11 +25,11 @@ const Popup = ({ message, onClose, navigateTo, children, showConfirm }) => {
         <div style={{ marginTop: '10px' }}>
           {showConfirm ? (
             <>
-              <button onClick={showConfirm}>Confirm</button>
-              <button onClick={handleClose} style={{ marginLeft: '10px' }}>Cancel</button>
+              <button onClick={showConfirm}><Translate>Confirm</Translate></button>
+              <button onClick={handleClose} style={{ marginLeft: '10px' }}><Translate>Cancel</Translate></button>
             </>
           ) : (
-            <button onClick={handleClose}>OK</button>
+            <button onClick={handleClose}><Translate>OK</Translate></button>
           )}
         </div>
       </div>
@@ -39,28 +42,33 @@ const MyBookings = () => {
   const [popupMessage, setPopupMessage] = useState('');
   const [popupNav, setPopupNav] = useState(null);
   const [cancelId, setCancelId] = useState(null);
+  const [cancelPopupMessage, setCancelPopupMessage] = useState('');
   const navigate = useNavigate();
+  const { language } = useContext(LanguageContext);
+
+  // Translate the confirmation popup message
+  useEffect(() => {
+    const getCancelMessage = async () => {
+      const msg = await translateText("Are you sure you want to cancel this booking?", language);
+      setCancelPopupMessage(msg);
+    };
+    getCancelMessage();
+  }, [language]);
+
 
   const loadBookings = async () => {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      setPopupMessage('Please login to view your bookings.');
+      const msg = await translateText('Please login to view your bookings.', language);
+      setPopupMessage(msg);
       setPopupNav("/farmerlogin");
       return;
     }
 
     const { data, error } = await supabase
       .from('bookings')
-      .select(`
-        *,
-        vehicles (
-          name,
-          type,
-          price_per_day,
-          image_url
-        )
-      `)
+      .select(`*, vehicles (name, type, price_per_day, image_url)`)
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
@@ -78,40 +86,43 @@ const MyBookings = () => {
 
   const handleCancelBooking = async () => {
     if (!cancelId) return;
-  
+
     const { error } = await supabase
       .from('bookings')
       .update({ status: 'Cancelled' })
-      .eq('id', cancelId); // Make sure this id matches the correct row
-  
+      .eq('id', cancelId);
+
     if (error) {
-      setPopupMessage('Failed to cancel booking');
+      const msg = await translateText('Failed to cancel booking', language);
+      setPopupMessage(msg);
     } else {
-      setPopupMessage('Booking cancelled successfully');
-      loadBookings(); // Re-fetch bookings to reflect changes
+      const msg = await translateText('Booking cancelled successfully', language);
+      setPopupMessage(msg);
+      loadBookings();
     }
-  
-    setCancelId(null); // Reset the cancel state
+
+    setCancelId(null);
   };
-  
 
   const containerStyle = {
     padding: '20px',
-    fontFamily: 'Arial, sans-serif',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+    gap: '20px',
   };
 
   const itemStyle = {
     border: '1px solid #ccc',
     borderRadius: '8px',
-    padding: '10px',
-    margin: '10px 0',
+    padding: '1rem',
     backgroundColor: 'rgba(255, 255, 255, 0.07)',
     color: 'white',
+    display: 'flex',
+    flexDirection: 'column',
   };
 
   const total = bookings.reduce((sum, b) => {
-    const days =
-      (new Date(b.end_date) - new Date(b.start_date)) / (1000 * 60 * 60 * 24) + 1;
+    const days = (new Date(b.end_date) - new Date(b.start_date)) / (1000 * 60 * 60 * 24) + 1;
     return sum + (b.vehicles?.price_per_day || 0) * days;
   }, 0);
 
@@ -119,45 +130,46 @@ const MyBookings = () => {
     <div className='scroll1'>
       <button
         type="button"
-        style={{ width: 'fit-content', backgroundColor: 'rgba(255, 255, 255, 0)', border: 'outset rgba(255, 255, 255, 0)' }}
+        style={{ width: 'fit-content', backgroundColor: 'transparent', border: 'none', padding: '1rem' }}
         onClick={() => navigate("/vehicles")}
       >
         <span style={{ fontSize: '30px', color: 'white' }}>&larr;</span>
       </button>
 
-      <h1 style={{ textAlign: 'center', color: 'white' }}>Your Bookings</h1>
+      <h1 style={{ textAlign: 'center', color: 'white' }}><Translate>Your Bookings</Translate></h1>
 
       <div id="booking-container" style={containerStyle}>
         {bookings.length === 0 ? (
-          <p style={{ color: 'white' }}>No bookings found.</p>
+          <p style={{ color: 'white', gridColumn: '1 / -1', textAlign: 'center' }}><Translate>No bookings found.</Translate></p>
         ) : (
           bookings.map((b) => (
             <div key={b.id} style={itemStyle}>
               <img
-                src={b.vehicles?.image_url || 'https://via.placeholder.com/400x250'}
+                src={b.vehicles?.image_url || 'https://placehold.co/400x250/243b55/ffffff?text=Vehicle'}
                 alt={b.vehicles?.name}
                 style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '6px' }}
               />
-              <h3>{b.vehicles?.name}</h3>
-              <p>Type: {b.vehicles?.type}</p>
-              <p>Status: {b.status}</p>
-              <p>From: {b.start_date}</p>
-              <p>To: {b.end_date}</p>
-              <p>₹{b.vehicles?.price_per_day} /day</p>
+              <h3 style={{ marginTop: '1rem' }}>{b.vehicles?.name}</h3>
+              <p><Translate>Type:</Translate> {b.vehicles?.type}</p>
+              <p><Translate>Status:</Translate> <Translate>{b.status}</Translate></p>
+              <p><Translate>From:</Translate> {b.start_date}</p>
+              <p><Translate>To:</Translate> {b.end_date}</p>
+              <p>₹{b.vehicles?.price_per_day} <Translate>/day</Translate></p>
 
               {['Pending', 'Confirmed'].includes(b.status) && (
                 <button
                   onClick={() => setCancelId(b.id)}
                   style={{
-                    marginTop: '10px',
-                    padding: '6px 12px',
+                    marginTop: 'auto', // Pushes button to the bottom
+                    padding: '0.5rem 1rem',
                     background: '#dc3545',
                     color: 'white',
                     border: 'none',
                     borderRadius: '5px',
+                    cursor: 'pointer',
                   }}
                 >
-                  Cancel Booking
+                  <Translate>Cancel Booking</Translate>
                 </button>
               )}
             </div>
@@ -166,8 +178,8 @@ const MyBookings = () => {
       </div>
 
       {bookings.length > 0 && (
-        <div className="booking-total" style={{ marginLeft: '20px', marginTop: '20px', fontWeight: 'bold', color: 'white' }}>
-          Total Booking Cost: ₹{total}
+        <div className="booking-total" style={{ padding: '20px', fontWeight: 'bold', color: 'white', fontSize: '1.2rem' }}>
+          <Translate>Total Booking Cost:</Translate> ₹{total}
         </div>
       )}
 
@@ -184,7 +196,7 @@ const MyBookings = () => {
 
       {cancelId && (
         <Popup
-          message="Are you sure you want to cancel this booking?"
+          message={cancelPopupMessage}
           onClose={() => setCancelId(null)}
           showConfirm={handleCancelBooking}
         />
