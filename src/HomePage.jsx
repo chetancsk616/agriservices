@@ -19,10 +19,10 @@ const HomePage = () => {
                 height="342.9"
                 width="570"
                 controls
-                poster="images/Screenshot 2025-05-13 200635.png"
+                poster="/images/Screenshot 2025-05-13 200635.png"
                 style={{ border: "solid #000000 4px", borderRadius: "20px", borderStyle: "outset" }}
               >
-                <source src="videos/Marvel Studios' Avengers_ Endgame - Official Trailer.mp4" type="video/mp4" />
+                <source src="/videos/Marvel Studios' Avengers_ Endgame - Official Trailer.mp4" type="video/mp4" />
               </video>
             </div>
           </div>
