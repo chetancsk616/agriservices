@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { LanguageContext } from './LanguageContext';
-mport { translateText } from './translationService.js'; 
+import { translateText } from './translationService.js'; 
 
 async function fetchTranslation(text, targetLang) {
   if (targetLang === 'en' || !text.trim()) {
