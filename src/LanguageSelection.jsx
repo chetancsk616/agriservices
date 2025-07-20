@@ -1,27 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { LanguageContext } from './LanguageContext';
 import './style.css';
 
 const LanguageSelection = () => {
   const navigate = useNavigate();
+  const { setLanguage } = useContext(LanguageContext);
 
+  // Simplified handler
   const handleLanguageClick = (lang) => {
-    switch (lang) {
-      case 'en':
-        navigate('/main/0');
-        break;
-      case 'te':
-        navigate('/main/0');
-        break;
-      case 'hi':
-        navigate('/main/0');
-        break;
-      case 'ta':
-        navigate('/main/0');
-        break;
-      default:
-        break;
-    }
+    setLanguage(lang);
+    navigate('/main/0');
   };
 
   return (
@@ -34,48 +23,23 @@ const LanguageSelection = () => {
       </div>
 
       <div className="select">
-        <div className="lang" data-value="en" onClick={() => handleLanguageClick('en')}>
-          <div
-            className="sound"
-            style={{
-              background: "url('/images/beeping.jpg') no-repeat",
-              backgroundSize: 'cover',
-            }}
-          ></div>
+        <div className="lang" onClick={() => handleLanguageClick('en')}>
+          <div className="sound"></div> {/* Style is now in CSS */}
           English
         </div>
 
-        <div className="lang" data-value="te" onClick={() => handleLanguageClick('te')}>
-          <div
-            className="sound"
-            style={{
-              background: "url('/images/beeping.jpg') no-repeat",
-              backgroundSize: 'cover',
-            }}
-          ></div>
+        <div className="lang" onClick={() => handleLanguageClick('te')}>
+          <div className="sound"></div>
           తెలుగు
         </div>
 
-        <div className="lang" data-value="hi" onClick={() => handleLanguageClick('hi')}>
-          <div
-            className="sound"
-            style={{
-              background: "url('/images/beeping.jpg') no-repeat"
-,
-              backgroundSize: 'cover',
-            }}
-          ></div>
+        <div className="lang" onClick={() => handleLanguageClick('hi')}>
+          <div className="sound"></div>
           हिन्दी
         </div>
 
-        <div className="lang" data-value="ta" onClick={() => handleLanguageClick('ta')}>
-          <div
-            className="sound"
-            style={{
-              background: "url('/images/beeping.jpg') no-repeat",
-              backgroundSize: 'cover',
-            }}
-          ></div>
+        <div className="lang" onClick={() => handleLanguageClick('ta')}>
+          <div className="sound"></div>
           தமிழ்
         </div>
       </div>
