@@ -206,3 +206,5 @@ const VehicleDetail = () => {
     </div>
   );
 };
+
+export default VehicleDetail;
