@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Translate from './Translation';
+import Translate from './Translation.jsx'; // Corrected the import path
 import './style.css';
 
 const HomePage = () => {
@@ -15,15 +15,13 @@ const HomePage = () => {
         return (
           <div className="back">
             <div className="vid">
-              <h1 className="our" id="8">Guide</h1>
+              <h1 className="our"><Translate>Guide</Translate></h1>
               <video
-                height="342.9"
-                width="570"
                 controls
-                poster="images/Screenshot 2025-05-13 200635.png"
-                style={{ border: "solid #000000 4px", borderRadius: "20px", borderStyle: "outset" }}
+                poster="/images/Screenshot 2025-05-13 200635.png"
+                style={{ border: "solid #000000 4px", borderRadius: "20px", borderStyle: "outset", maxWidth: '100%', height: 'auto' }}
               >
-                <source src="videos/Marvel Studios' Avengers_ Endgame - Official Trailer.mp4" type="video/mp4" />
+                <source src="/videos/Marvel Studios' Avengers_ Endgame - Official Trailer.mp4" type="video/mp4" />
               </video>
             </div>
           </div>
@@ -33,12 +31,12 @@ const HomePage = () => {
           <div className="back">
             <div className="s">
               <div className="signup1" onClick={() => navigate('/farmersignup')}>
-                <h1 id="9" className='f'>Farmer</h1>
-                <h1 className='li'>SignUp</h1>
+                <h1 className='f'><Translate>Farmer</Translate></h1>
+                <h1 className='li'><Translate>SignUp</Translate></h1>
               </div>
               <div className="signup2" onClick={() => navigate('/merchantsignup')}>
-                <h1 id="text" className='f'>Merchant</h1>
-                <h1 className='li'>SignUp</h1>
+                <h1 className='f'><Translate>Merchant</Translate></h1>
+                <h1 className='li'><Translate>SignUp</Translate></h1>
               </div>
             </div>
           </div>
@@ -48,12 +46,12 @@ const HomePage = () => {
           <div className="back">
             <div className="l">
               <div className="login1" onClick={() => navigate('/farmerlogin')}>
-                <h1 id="10" className='f'>Farmer</h1>
-                <h1 className='li'>LogIn</h1>
+                <h1 className='f'><Translate>Farmer</Translate></h1>
+                <h1 className='li'><Translate>LogIn</Translate></h1>
               </div>
               <div className="login2" onClick={() => navigate('/merchantlogin')}>
-                <h1 id="11" className='f'>Merchant</h1>
-                <h1 className='li'>LogIn</h1>
+                <h1 className='f'><Translate>Merchant</Translate></h1>
+                <h1 className='li'><Translate>LogIn</Translate></h1>
               </div>
             </div>
           </div>
@@ -61,34 +59,32 @@ const HomePage = () => {
       case "4":
         return (
           <div className="back">
-            <h1 className="our" style={{ textAlign: "center" }} id="12">About Us</h1>
+            <h1 className="our" style={{ textAlign: "center" }}><Translate>About Us</Translate></h1>
             <div className="aboutus">
-            <section id = "13">
-                <h2>Rooted in the Soil, Growing with Technology</h2>
-                <p>Every seed holds a promise. Every farmer holds a dream.</p>
-                <p>At <strong>AgriConnect</strong>, we exist to make those dreams easier to achieve.</p>
-                <p>We know the struggles of farmers—the early mornings, the uncertain skies, and the endless hard work.</p>
-                <p>That’s why we’ve built a platform where technology meets tradition, helping farmers connect with merchants, book vehicles, order pesticides, and care for their crops, all with a few simple clicks.</p>
-                <p>We stand by our farmers, offering them not just services, but support, trust, and hope.</p>
-                <p>Because when they succeed, the entire world grows a little brighter.</p>
+              <section>
+                <h2><Translate>Rooted in the Soil, Growing with Technology</Translate></h2>
+                <p><Translate>Every seed holds a promise. Every farmer holds a dream.</Translate></p>
+                <p><Translate>At </Translate><strong>AgriConnect</strong><Translate>, we exist to make those dreams easier to achieve.</Translate></p>
+                <p><Translate>We know the struggles of farmers—the early mornings, the uncertain skies, and the endless hard work.</Translate></p>
+                <p><Translate>That’s why we’ve built a platform where technology meets tradition, helping farmers connect with merchants, book vehicles, order pesticides, and care for their crops, all with a few simple clicks.</Translate></p>
+                <p><Translate>We stand by our farmers, offering them not just services, but support, trust, and hope.</Translate></p>
+                <p><Translate>Because when they succeed, the entire world grows a little brighter.</Translate></p>
               </section>
-
-              <section id = "14">
-                <h2>By Farmers. For Farmers.</h2>
-                <p>At the heart of <strong>AgriConnect</strong> is a simple belief—farmers deserve better.</p>
-                <p>Better access. Better support. Better lives.</p>
-                <p>Born from listening to the voices of farmers, our platform is designed to simplify their day-to-day struggles, offering them instant connections to vehicles, pesticides, crop health services, and merchants.</p>
-                <p>We aim to cut through the noise, giving farmers the power to make decisions faster, safer, and smarter.</p>
-                <p><strong>AgriConnect</strong> is more than an app—it’s a movement toward empowering those who feed the world.</p>
+              <section>
+                <h2><Translate>By Farmers. For Farmers.</Translate></h2>
+                <p><Translate>At the heart of </Translate><strong>AgriConnect</strong><Translate> is a simple belief—farmers deserve better.</Translate></p>
+                <p><Translate>Better access. Better support. Better lives.</Translate></p>
+                <p><Translate>Born from listening to the voices of farmers, our platform is designed to simplify their day-to-day struggles, offering them instant connections to vehicles, pesticides, crop health services, and merchants.</Translate></p>
+                <p><Translate>We aim to cut through the noise, giving farmers the power to make decisions faster, safer, and smarter.</Translate></p>
+                <p><strong>AgriConnect</strong><Translate> is more than an app—it’s a movement toward empowering those who feed the world.</Translate></p>
               </section>
-
-              <section id = "15">
-                <h2>Cultivating Connections, Harvesting Trust</h2>
-                <p>Farming is a journey of patience, care, and resilience.</p>
-                <p>At <strong>AgriConnect</strong>, we walk beside farmers on that journey, providing them with a digital bridge to the services and support they need.</p>
-                <p>From booking vehicles to ordering pesticides and connecting with reliable merchants, we help them focus on what they do best—growing life from the soil.</p>
-                <p>Our mission is simple: to make every farmer feel seen, supported, and connected.</p>
-                <p>Because we believe that trust is the most valuable crop of all.</p>
+              <section>
+                <h2><Translate>Cultivating Connections, Harvesting Trust</Translate></h2>
+                <p><Translate>Farming is a journey of patience, care, and resilience.</Translate></p>
+                <p><Translate>At </Translate><strong>AgriConnect</strong><Translate>, we walk beside farmers on that journey, providing them with a digital bridge to the services and support they need.</Translate></p>
+                <p><Translate>From booking vehicles to ordering pesticides and connecting with reliable merchants, we help them focus on what they do best—growing life from the soil.</Translate></p>
+                <p><Translate>Our mission is simple: to make every farmer feel seen, supported, and connected.</Translate></p>
+                <p><Translate>Because we believe that trust is the most valuable crop of all.</Translate></p>
               </section>
             </div>
           </div>
@@ -97,25 +93,25 @@ const HomePage = () => {
         return (
           <div className="back">
             <div className="d">
-              <h1 className="our" id="16"><Translate>OUR</Translate></h1>
-              <h1 className="services" id="17"><Translate>SERVICES</Translate></h1>
+              <h1 className="our"><Translate>OUR</Translate></h1>
+              <h1 className="services"><Translate>SERVICES</Translate></h1>
             </div>
             <div className="b">
               <div className="a1" onClick={() => navigate('/vehicles')}>
-                <h1 className="vehicle" id="18">Vehicle</h1>
-                <h1 className="booking" id="19">BOOKING</h1>
+                <h1 className="vehicle"><Translate>Vehicle</Translate></h1>
+                <h1 className="booking"><Translate>BOOKING</Translate></h1>
               </div>
               <div className="a2" onClick={() => navigate('/products')}>
-                <h1 className="Pesticides" id="20">Pesticides</h1>
-                <h1 className="order" id="21">ORDER</h1>
+                <h1 className="Pesticides"><Translate>Pesticides</Translate></h1>
+                <h1 className="order"><Translate>ORDER</Translate></h1>
               </div>
               <div className="a3">
-                <h1 className="Crop" id="22">Crop</h1>
-                <h1 className="HEALTH-CARE" id="23">HEALTH CARE</h1>
+                <h1 className="Crop"><Translate>Crop</Translate></h1>
+                <h1 className="HEALTH-CARE"><Translate>HEALTH CARE</Translate></h1>
               </div>
               <div className="a4" onClick={() => navigate('/merchantlogin')}>
-                <h1 className="Merchant" id="24">Merchant</h1>
-                <h1 className="LOGIN" id="25">LOGIN</h1>
+                <h1 className="Merchant"><Translate>Merchant</Translate></h1>
+                <h1 className="LOGIN"><Translate>LOGIN</Translate></h1>
               </div>
             </div>
           </div>
@@ -125,27 +121,27 @@ const HomePage = () => {
 
   return (
     <>
-      <div className="hedder">
-        <button onClick={() => navigate("/main/0")} id="1">Home</button>
-        <button onClick={() => navigate("/main/1")} id="2">Guide</button>
-        <button onClick={() => navigate("/main/2")} id="3">SignUp</button>
-        <button onClick={() => navigate("/main/3")} id="4">LogIn</button>
-        <button onClick={() => navigate("/main/4")} id="5">About Us</button>
-        <button onClick={() => navigate("/profile")} id="6">Profile</button>
-      </div>
+      <header className="hedder">
+        <button onClick={() => navigate("/main/0")}><Translate>Home</Translate></button>
+        <button onClick={() => navigate("/main/1")}><Translate>Guide</Translate></button>
+        <button onClick={() => navigate("/main/2")}><Translate>SignUp</Translate></button>
+        <button onClick={() => navigate("/main/3")}><Translate>LogIn</Translate></button>
+        <button onClick={() => navigate("/main/4")}><Translate>About Us</Translate></button>
+        <button onClick={() => navigate("/profile")}><Translate>Profile</Translate></button>
+      </header>
 
-      <div id="app" className='scroll'>
+      <main id="app" className='scroll'>
         {renderContent()}
-      </div>
+      </main>
 
-      <div className="footer">
-        <h1 style={{ textDecoration: "solid underline" }} id="6">Contact Us</h1>
-        <p id="7">
-          Gmail: chetancsk300@gmail.com <br /><br />
-          PhoneNo: 7569493773 <br /><br />
-          Address: Vellore, Tamil Nadu, India <br /><br />
-        </p>
-      </div>
+      <footer className="footer">
+        <h1 style={{ textDecoration: "solid underline" }}><Translate>Contact Us</Translate></h1>
+        <div className="contact-details">
+            <span><Translate>Gmail: chetancsk300@gmail.com</Translate></span>
+            <span><Translate>PhoneNo: 7569493773</Translate></span>
+            <span><Translate>Address: Vellore, Tamil Nadu, India</Translate></span>
+        </div>
+      </footer>
     </>
   );
 };
