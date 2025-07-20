@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { LanguageProvider } from './LanguageContext.jsx';
 import LanguageSelection from './LanguageSelection'; 
 import HomePage from './HomePage';
 import FarmerSignup from './FarmerSignup';
