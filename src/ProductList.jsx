@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '/src/supabaseClient';
 import './style.css';
+import { LanguageContext } from './LanguageContext.jsx';
+import { translateText } from './translationService.js';
+import Translate from './Translation.jsx';
 
 const Popup = ({ message, onClose, navigateTo }) => {
   const navigate = useNavigate();
@@ -19,7 +22,7 @@ const Popup = ({ message, onClose, navigateTo }) => {
     <div className="popup-overlay">
       <div className="popup-box">
         <p>{message}</p>
-        <button onClick={handleClose}>OK</button>
+        <button onClick={handleClose}><Translate>OK</Translate></button>
       </div>
     </div>
   );
@@ -31,6 +34,7 @@ const ProductList = () => {
   const [popupMessage, setPopupMessage] = useState('');
   const [popupNav, setPopupNav] = useState(null);
   const navigate = useNavigate();
+  const { language } = useContext(LanguageContext);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -45,32 +49,30 @@ const ProductList = () => {
   const handleAddToCart = async (pid) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      setPopupMessage("Please log in to add items to cart.");
-      setPopupNav('/login');
+      const msg = await translateText("Please log in to add items to cart.", language);
+      setPopupMessage(msg);
+      setPopupNav('/farmerlogin'); // Updated to farmer login
       return;
     }
-  
+
     const { data: cartData, error: fetchError } = await supabase
       .from('cart')
       .select('*')
       .eq('user_id', user.id)
       .single();
-  
-    let newProductIds = [pid];
-    let newQuantities = [1];
-  
+
     if (!fetchError && cartData) {
       const productIds = cartData.product_id || [];
       const quantities = cartData.quantity || [];
       const index = productIds.indexOf(pid);
-  
+
       if (index !== -1) {
         quantities[index]++;
       } else {
         productIds.push(pid);
         quantities.push(1);
       }
-  
+
       const { error: updateError } = await supabase
         .from('cart')
         .update({
@@ -78,9 +80,10 @@ const ProductList = () => {
           quantity: quantities
         })
         .eq('user_id', user.id);
-  
+
       if (updateError) {
-        setPopupMessage('Failed to update cart.');
+        const msg = await translateText('Failed to update cart.', language);
+        setPopupMessage(msg);
         return;
       }
     } else {
@@ -88,63 +91,66 @@ const ProductList = () => {
         .from('cart')
         .insert([{
           user_id: user.id,
-          product_id: newProductIds,
-          quantity: newQuantities
+          product_id: [pid],
+          quantity: [1]
         }]);
-  
+
       if (insertError) {
-        setPopupMessage('Failed to add to cart.');
+        const msg = await translateText('Failed to add to cart.', language);
+        setPopupMessage(msg);
         return;
       }
     }
-  
-    setPopupMessage('Item added to cart.');
+
+    const msg = await translateText('Item added to cart.', language);
+    setPopupMessage(msg);
   };
-  
 
   const containerStyle = {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+    display: 'grid', // Using grid for better consistency
+    gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+    gap: '20px',
     padding: '20px',
   };
 
   return (
     <div className='scroll1'>
-      <button
-        style={{
-          color: "white",
-          width: "fit-content",
-          backgroundColor: "rgba(255, 255, 255, 0)",
-          border: "outset rgba(255, 255, 255, 0)",
-          fontSize: "20px"
-        }}
-        onClick={() => navigate("/main/0")}
-      >
-        &larr;
-      </button>
-      <button
-        onClick={() => navigate("/cart")}
-        style={{
-          color: "white",
-          width: "fit-content",
-          backgroundColor: "rgba(255, 255, 255, 0)",
-          border: "outset rgba(255, 255, 255, 0)",
-          fontSize: "20px"
-        }}
-      >
-        Cart
-      </button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px' }}>
+        <button
+          style={{
+            color: "white",
+            background: "none",
+            border: "none",
+            fontSize: "30px",
+            cursor: "pointer"
+          }}
+          onClick={() => navigate("/main/0")}
+        >
+          &larr;
+        </button>
+        <button
+          onClick={() => navigate("/cart")}
+          style={{
+            color: "white",
+            background: "rgba(255, 255, 255, 0.1)",
+            border: "1px solid white",
+            borderRadius: '8px',
+            fontSize: "1rem",
+            padding: '0.5rem 1rem',
+            cursor: "pointer"
+          }}
+        >
+          <Translate>Cart</Translate>
+        </button>
+      </div>
 
-      <h1 style={{ textAlign: 'center' }}>Shop Products</h1>
+      <h1 style={{ textAlign: 'center' }}><Translate>Shop Products</Translate></h1>
 
       <div style={containerStyle}>
         {products.map((p) => {
           const cardStyle = {
-            padding: '10px',
+            padding: '1rem',
             borderRadius: '8px',
-            margin: '10px',
-            width: '220px',
             cursor: 'pointer',
             boxShadow:
               hoveredCardId === p.id
@@ -166,37 +172,44 @@ const ProductList = () => {
               onMouseLeave={() => setHoveredCardId(null)}
               onClick={() => navigate(`/product/${p.id}`)}
             >
-              <img
-                src={p.image_url || 'https://via.placeholder.com/150'}
-                alt={p.name}
-                style={{ width: '100%', height: '150px', objectFit: 'contain' }}
-              />
-              <h3
-                style={{
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                {p.name}
-              </h3>
-              <p style={{ fontWeight: 'bold' }}>₹{p.price}</p>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleAddToCart(p.id);
-                }}
-                style={{
-                  padding: '8px',
-                  borderRadius: '5px',
-                  background: '#28a745',
-                  color: 'white',
-                  border: 'none',
-                  marginTop: '10px',
-                }}
-              >
-                Add to Cart
-              </button>
+              <div>
+                <img
+                  src={p.image_url || 'https://placehold.co/220x150/243b55/ffffff?text=Product'}
+                  alt={p.name}
+                  style={{ width: '100%', height: '150px', objectFit: 'contain', borderRadius: '4px' }}
+                />
+                <h3
+                  style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    marginTop: '0.5rem',
+                    marginBottom: '0.5rem'
+                  }}
+                >
+                  {p.name} {/* Product names from DB are not translated */}
+                </h3>
+              </div>
+              <div>
+                <p style={{ fontWeight: 'bold', margin: '0 0 10px 0' }}>₹{p.price}</p>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddToCart(p.id);
+                  }}
+                  style={{
+                    padding: '8px',
+                    borderRadius: '5px',
+                    background: '#28a745',
+                    color: 'white',
+                    border: 'none',
+                    width: '100%',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <Translate>Add to Cart</Translate>
+                </button>
+              </div>
             </div>
           );
         })}
