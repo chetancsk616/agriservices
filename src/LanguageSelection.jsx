@@ -11,13 +11,13 @@ const LanguageSelection = () => {
         navigate('/main/0');
         break;
       case 'te':
-        navigate('/translated_te_main');
+        navigate('/main/0');
         break;
       case 'hi':
-        navigate('/translated_hi_main');
+        navigate('/main/0');
         break;
       case 'ta':
-        navigate('/translated_ta_main');
+        navigate('/main/0');
         break;
       default:
         break;
@@ -38,7 +38,7 @@ const LanguageSelection = () => {
           <div
             className="sound"
             style={{
-              background: "url('src/assets/beeping.jpg') no-repeat",
+              background: "url('/images/beeping.jpg') no-repeat",
               backgroundSize: 'cover',
             }}
           ></div>
@@ -49,7 +49,7 @@ const LanguageSelection = () => {
           <div
             className="sound"
             style={{
-              background: "url('src/assets/beeping.jpg') no-repeat",
+              background: "url('/images/beeping.jpg') no-repeat",
               backgroundSize: 'cover',
             }}
           ></div>
@@ -60,7 +60,7 @@ const LanguageSelection = () => {
           <div
             className="sound"
             style={{
-              background: "url('src/assets/beeping.jpg') no-repeat"
+              background: "url('/images/beeping.jpg') no-repeat"
 ,
               backgroundSize: 'cover',
             }}
@@ -72,7 +72,7 @@ const LanguageSelection = () => {
           <div
             className="sound"
             style={{
-              background: "url('src/assets/beeping.jpg') no-repeat",
+              background: "url('/images/beeping.jpg') no-repeat",
               backgroundSize: 'cover',
             }}
           ></div>
