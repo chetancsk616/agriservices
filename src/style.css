@@ -81,6 +81,15 @@ a {
   background: rgba(255, 255, 255, 0.2);
 }
 
+.guide-video {
+  border: solid #000000 4px;
+  border-radius: 20px;
+  border-style: outset;
+  width: 100%; /* Make the video responsive */
+  max-width: 570px; /* Set a maximum width */
+  height: auto; /* Maintain the correct aspect ratio */
+}
+
 /* --- Footer --- */
 .footer {
   color: #ffffff;
