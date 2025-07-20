@@ -18,6 +18,7 @@ import MyBookings from './MyBookings';
 
 const App = () => {
   return (
+    <LanguageProvider>
     <Router>
       <Routes>
         <Route path="/" element={<LanguageSelection />} />
@@ -36,6 +37,7 @@ const App = () => {
         <Route path="/mybookings" element={<MyBookings />} />
       </Routes>
     </Router>
+    </LanguageProvider>
   );
 };
 
