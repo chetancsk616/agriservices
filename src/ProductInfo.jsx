@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import supabase from '/src/supabaseClient';
 import './style.css';
+import { LanguageContext } from './LanguageContext.jsx';
+import { translateText } from './translationService.js';
+import Translate from './Translation.jsx';
 
 const Popup = ({ message, onClose, navigateTo }) => {
   const navigate = useNavigate();
@@ -14,7 +17,7 @@ const Popup = ({ message, onClose, navigateTo }) => {
     <div className="popup-overlay">
       <div className="popup-box">
         <p>{message}</p>
-        <button onClick={handleClose}>OK</button>
+        <button onClick={handleClose}><Translate>OK</Translate></button>
       </div>
     </div>
   );
@@ -22,26 +25,29 @@ const Popup = ({ message, onClose, navigateTo }) => {
 
 export default function ProductInfo() {
   const { id } = useParams();
-  const nav = useNavigate();
-  const [p, setP] = useState(null);
+  const navigate = useNavigate();
+  const [product, setProduct] = useState(null);
   const [popupMessage, setPopupMessage] = useState('');
   const [popupNav, setPopupNav] = useState(null);
+  const { language } = useContext(LanguageContext);
 
   useEffect(() => {
-    (async () => {
+    const fetchProduct = async () => {
       const { data, error } = await supabase
         .from('products')
         .select('*')
         .eq('id', id)
         .single();
-      if (!error) setP(data);
-    })();
+      if (!error) setProduct(data);
+    };
+    fetchProduct();
   }, [id]);
 
   const addCart = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      setPopupMessage('Please log in to add items to cart.');
+      const msg = await translateText('Please log in to add items to cart.', language);
+      setPopupMessage(msg);
       setPopupNav('/farmerlogin');
       return;
     }
@@ -58,12 +64,10 @@ export default function ProductInfo() {
     if (!fetchError && cartData) {
       const productIndex = cartData.product_id.indexOf(parseInt(id));
       if (productIndex !== -1) {
-        // product already in cart; update quantity
         newProductIdArray = [...cartData.product_id];
         newQuantityArray = [...cartData.quantity];
         newQuantityArray[productIndex]++;
       } else {
-        // add new product
         newProductIdArray = [...cartData.product_id, parseInt(id)];
         newQuantityArray = [...cartData.quantity, 1];
       }
@@ -77,11 +81,11 @@ export default function ProductInfo() {
         .eq('user_id', user.id);
 
       if (updateError) {
-        setPopupMessage('Unable to update cart.');
+        const msg = await translateText('Unable to update cart.', language);
+        setPopupMessage(msg);
         return;
       }
     } else {
-      // no cart row exists for user
       const { error: insertError } = await supabase
         .from('cart')
         .insert([
@@ -93,26 +97,33 @@ export default function ProductInfo() {
         ]);
 
       if (insertError) {
-        setPopupMessage('Unable to add to cart.');
+        const msg = await translateText('Unable to add to cart.', language);
+        setPopupMessage(msg);
         return;
       }
     }
-
-    setPopupMessage('Item added to cart.');
+    const msg = await translateText('Item added to cart.', language);
+    setPopupMessage(msg);
     setPopupNav('/cart');
   };
 
-  if (!p) return <div style={{ padding: 20, color: 'white' }}>Loading…</div>;
+  if (!product) {
+    return (
+        <div style={{ padding: 20, color: 'white', textAlign: 'center' }}>
+            <Translate>Loading…</Translate>
+        </div>
+    );
+  }
 
   return (
     <div style={{ maxWidth: 600, margin: 'auto', padding: 20, fontFamily: 'sans-serif', color: 'white' }} className='scroll1'>
-      <button onClick={() => nav("/products")} style={{ color: "white", background: "none", border: "none", marginBottom: '10px' }}>&larr;</button>
-      <img src={p.image_url || 'https://via.placeholder.com/300'} alt={p.name} style={{ width: '100%', maxHeight: 400, objectFit: 'contain', borderRadius: '10px' }} />
-      <h2>{p.name}</h2>
-      <h3 style={{ color: '#4caf50' }}>₹{p.price}</h3>
-      <p style={{ whiteSpace: 'pre-wrap' }}>{p.discription}</p>
-      <button onClick={addCart} style={{ marginTop: '20px', padding: '10px 20px', borderRadius: '6px', background: '#28a745', color: 'white', border: 'none', fontSize: '16px' }}>
-        Add to Cart
+      <button onClick={() => navigate("/products")} style={{ color: "white", background: "none", border: "none", marginBottom: '10px', fontSize: '30px' }}>&larr;</button>
+      <img src={product.image_url || 'https://placehold.co/600x400/243b55/ffffff?text=Product'} alt={product.name} style={{ width: '100%', maxHeight: 400, objectFit: 'contain', borderRadius: '10px' }} />
+      <h2>{product.name}</h2> {/* Dynamic content from DB - should not be translated */}
+      <h3 style={{ color: '#4caf50' }}>₹{product.price}</h3>
+      <p style={{ whiteSpace: 'pre-wrap' }}>{product.discription}</p> {/* Dynamic content from DB */}
+      <button onClick={addCart} style={{ marginTop: '20px', padding: '10px 20px', borderRadius: '6px', background: '#28a745', color: 'white', border: 'none', fontSize: '16px', cursor: 'pointer' }}>
+        <Translate>Add to Cart</Translate>
       </button>
 
       {popupMessage && (
