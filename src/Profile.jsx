@@ -31,6 +31,8 @@ const Popup = ({ message, onClose, navigateTo }) => {
 
 const Profile = () => {
   const navigate = useNavigate();
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [popupMessage, setPopupMessage] = useState('');
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -69,6 +71,37 @@ const Profile = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handlePasswordReset = async () => {
+    // 1. Validate the passwords
+    if (!newPassword || !confirmPassword) {
+      setPopupMessage('Please fill in both password fields.');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPopupMessage('Passwords do not match.');
+      return;
+    }
+    if (newPassword.length < 6) {
+      setPopupMessage('Password must be at least 6 characters long.');
+      return;
+    }
+  
+    // 2. Update the user in Supabase
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword
+    });
+  
+    // 3. Provide feedback to the user
+    if (error) {
+      setPopupMessage('Failed to update password: ' + error.message);
+    } else {
+      setPopupMessage('Password updated successfully!');
+      // Clear the fields after success
+      setNewPassword('');
+      setConfirmPassword('');
+    }
   };
 
   const handleEditToggle = async () => {
@@ -111,11 +144,26 @@ const Profile = () => {
         </div>
       );
       case "2":
-        return(
-        <div className="card2">
-          <a href='#'>link</a>
-        </div>
-      );
+        return (
+          <div className="card2">
+            <h2>Reset Your Password</h2>
+            <input
+              type="password"
+              placeholder="New Password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Confirm New Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            <button onClick={handlePasswordReset}>
+              Update Password
+            </button>
+          </div>
+        );
       case "3":
         return(
         <div className="card2">
