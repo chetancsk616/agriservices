@@ -87,7 +87,7 @@ export default function CropDoctor() {
     };
 
     return (
-        <div className="card p-6 md:p-8">
+        <div className="card5 p-6 md:p-8">
             <h2 className="text-2xl font-bold mb-4 text-gray-700">🌿 Crop Disease Detector</h2>
             <p className="text-gray-600 mb-6">Upload a photo of a plant leaf to check for diseases.</p>
             <form onSubmit={handleSubmit}>
