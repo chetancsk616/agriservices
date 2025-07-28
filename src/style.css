@@ -411,3 +411,73 @@ a {
   height: 30px;
   width: 30px;
 }
+
+/* Add these styles to your main CSS file, e.g., src/index.css */
+
+/* Card styling for the main containers */
+.card5 {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Primary button style */
+.btn-primary {
+  background-color: #22c55e; /* green-500 */
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #16a34a; /* green-600 */
+}
+
+.btn-primary:disabled {
+  background-color: #a3a3a3; /* neutral-400 */
+  cursor: not-allowed;
+}
+
+/* Loading spinner animation */
+.loader {
+  border: 4px solid #f3f4f6; /* gray-200 */
+  border-top: 4px solid #22c55e; /* green-500 */
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Custom styles for the file upload button in the CropDoctor component */
+.upload-btn-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.btn-upload {
+  border: 2px dashed #cbd5e1; /* coolGray-300 */
+  color: #475569; /* slate-600 */
+  background-color: #f8fafc; /* slate-50 */
+  padding: 2rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  width: 100%;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.btn-upload:hover {
+  border-color: #22c55e; /* green-500 */
+  color: #166534; /* green-800 */
+  background-color: #f0fdf4; /* green-50 */
+}
