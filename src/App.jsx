@@ -15,6 +15,7 @@ import ProductInfo from './ProductInfo';
 import VehicleList from './VehicleList';
 import VehicleDetail from './VehicleDetail';
 import MyBookings from './MyBookings';
+import AIAssistantPage from './AIAssistantPage';
 
 const App = () => {
   return (
@@ -35,6 +36,7 @@ const App = () => {
         <Route path="/vehicles" element={<VehicleList />} />
         <Route path="/vehicle/:id" element={<VehicleDetail />} />
         <Route path="/mybookings" element={<MyBookings />} />
+        <Route path="/aiassistantpage" element={<AIAssistantPage />} />
       </Routes>
     </Router>
     </LanguageProvider>
