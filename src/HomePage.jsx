@@ -105,7 +105,7 @@ const HomePage = () => {
                 <h1 className="Pesticides"><Translate>Pesticides</Translate></h1>
                 <h1 className="order"><Translate>ORDER</Translate></h1>
               </div>
-              <div className="a3">
+              <div className="a3" onClick={() => navigate('/aiassistantpage')}>
                 <h1 className="Crop"><Translate>Crop</Translate></h1>
                 <h1 className="HEALTH-CARE"><Translate>HEALTH CARE</Translate></h1>
               </div>
