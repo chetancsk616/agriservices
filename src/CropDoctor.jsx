@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-// const API_BASE_URL is already defined in AgriExpert.
 // For consistency in separate files, you would define it in each or a shared config file.
 const CROP_DOCTOR_API_URL = 'http://127.0.0.1:5000';
 
-function CropDoctor() {
+// FIXED: Added "export default" to the function definition
+export default function CropDoctor() {
     const [file, setFile] = useState(null);
     const [preview, setPreview] = useState('');
     const [result, setResult] = useState(null);
