@@ -4,7 +4,8 @@ import axios from 'axios';
 // import ReactMarkdown from 'react-markdown'; 
 
 // --- Configuration ---
-const API_BASE_URL = 'http://127.0.0.1:5000';
+// UPDATED: This now points to your live Railway deployment
+const API_BASE_URL = 'https://agriservices-production.up.railway.app';
 
 // --- SVG Icons ---
 const UserIcon = () => (
