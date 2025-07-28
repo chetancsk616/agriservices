@@ -36,7 +36,7 @@ export default function AgriExpert() {
     };
 
     return (
-        <div className="card p-6 md:p-8">
+        <div className="card5 p-6 md:p-8">
             <h2 className="text-2xl font-bold mb-4 text-gray-700">💬 Ask an Agri-Expert</h2>
             <p className="text-gray-600 mb-6">Ask about crop cycles, fertilizers, government schemes, or any other farming question.</p>
             <form onSubmit={handleSubmit}>
