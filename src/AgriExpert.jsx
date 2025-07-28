@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+// All API calls go to your single Flask server
 const API_BASE_URL = 'http://127.0.0.1:5000';
 
-function AgriExpert() {
+// FIXED: Added "export default" to the function definition
+export default function AgriExpert() {
     const [question, setQuestion] = useState('');
     const [result, setResult] = useState('');
     const [error, setError] = useState('');
@@ -22,6 +24,8 @@ function AgriExpert() {
 
         try {
             const response = await axios.post(`${API_BASE_URL}/ask-question`, { question });
+            // Using dangerouslySetInnerHTML to render HTML tags like <br>
+            // In a real app, sanitize this or use a markdown library for safety.
             setResult({ __html: response.data.answer.replace(/\n/g, '<br />') });
         } catch (err) {
             const errorMessage = err.response?.data?.error || err.message || 'An unknown error occurred.';
