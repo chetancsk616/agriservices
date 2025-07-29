@@ -5,7 +5,7 @@ import axios from 'axios';
 
 // --- Configuration ---
 // UPDATED: This now points to your live Railway deployment
-const API_BASE_URL = 'https://agriservices-production.up.railway.app';
+const API_BASE_URL = 'agriservices-production-e14a.up.railway.app';
 
 // --- SVG Icons ---
 const UserIcon = () => (
