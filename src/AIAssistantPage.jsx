@@ -13,7 +13,7 @@ const UserIcon = () => (
 );
 
 const AiIcon = () => (
-    <svg className="w-8 h-8" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <svg className="w-0.1 h-0.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
         <defs>
             <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" style={{stopColor: '#4ade80', stopOpacity:1}} />
@@ -27,7 +27,7 @@ const AiIcon = () => (
 );
 
 const SendIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-0.1 h-0.1" viewBox="0 0 20 20" fill="currentColor">
         <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.428A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
     </svg>
 );
