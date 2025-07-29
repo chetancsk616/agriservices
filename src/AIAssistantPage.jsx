@@ -4,16 +4,18 @@ import axios from 'axios';
 // import ReactMarkdown from 'react-markdown'; 
 
 // --- Configuration ---
-// UPDATED: This now points to your live Railway deployment
-const API_BASE_URL = 'https://agriservices-production.up.railway.app/';
+// FIXED: Removed the trailing slash to prevent URL errors.
+const API_BASE_URL = 'https://agriservices-production.up.railway.app';
 
 // --- SVG Icons ---
+// FIXED: Restored correct icon sizing.
 const UserIcon = () => (
-    <svg className="w-0.1 h-0.1 text-white bg-green-600 rounded-full p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+    <svg className="w-8 h-8 text-white bg-green-600 rounded-full p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
 );
 
+// FIXED: Restored correct icon sizing.
 const AiIcon = () => (
-    <svg className="w-0.1 h-0.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <svg className="w-8 h-8" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
         <defs>
             <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" style={{stopColor: '#4ade80', stopOpacity:1}} />
@@ -26,8 +28,9 @@ const AiIcon = () => (
     </svg>
 );
 
+// FIXED: Restored correct icon sizing.
 const SendIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="w-0.1 h-0.1" viewBox="0 0 20 20" fill="currentColor">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
         <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.428A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
     </svg>
 );
@@ -94,6 +97,7 @@ export default function AIAssistantPage() {
         removeImage();
 
         try {
+            // The URL is constructed here. The base URL should not have a trailing slash.
             const response = await axios.post(`${API_BASE_URL}/analyze-chat`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
