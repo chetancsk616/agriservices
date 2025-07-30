@@ -5,7 +5,7 @@ import axios from 'axios';
 
 // --- Configuration ---
 // FIXED: Removed the trailing slash to prevent URL errors.
-const API_BASE_URL = 'https://agriservices-production.up.railway.app';
+const API_BASE_URL = 'https://agriservices.streamlit.app';
 
 // --- SVG Icons ---
 // FIXED: Restored correct icon sizing.
