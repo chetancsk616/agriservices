@@ -105,19 +105,21 @@ const HomePage = () => {
                 <h1 className="Pesticides"><Translate>Pesticides</Translate></h1>
                 <h1 className="order"><Translate>ORDER</Translate></h1>
               </div>
-              <div className="a3" onClick={() => navigate('https://agriservices.streamlit.app/')}>
-                <h1 className="Crop"><Translate>Crop</Translate></h1>
-                <h1 className="HEALTH-CARE"><Translate>HEALTH CARE</Translate></h1>
-              </div>
+              {/* --- CORRECTED NAVIGATION --- */}
+              {/* Using an anchor tag for the external link and removing the incorrect div */}
               <a 
                 href="https://agriservices.streamlit.app/" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="a4"
+                className="a3"
               >
                 <h1 className="Crop"><Translate>Crop</Translate></h1>
                 <h1 className="HEALTH-CARE"><Translate>HEALTH CARE</Translate></h1>
               </a>
+              <div className="a4" onClick={() => navigate('/merchantlogin')}>
+                <h1 className="Merchant"><Translate>Merchant</Translate></h1>
+                <h1 className="LOGIN"><Translate>LOGIN</Translate></h1>
+              </div>
             </div>
           </div>
         );
