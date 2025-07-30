@@ -1,120 +1,144 @@
+# app.py
 import os
 import base64
 import requests
 import google.generativeai as genai
 import json
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+import streamlit as st
 from dotenv import load_dotenv
+from PIL import Image
+import io
 
-# Load environment variables from a .env file
+# --- Page Configuration ---
+st.set_page_config(
+    page_title="Agri-Assistant",
+    page_icon="🌿",
+    layout="centered",
+    initial_sidebar_state="auto",
+)
+
+# --- Load API Keys ---
+# Use Streamlit's secrets management for deployment
+# For local development, you can use a .env file
 load_dotenv()
-
-app = Flask(__name__)
-
-# --- CORS Configuration ---
-# FIXED: Explicitly allow requests from your Vercel frontend.
-# This is the fix for the "blocked by CORS policy" error.
-CORS(app, resources={r"/analyze-chat": {"origins": "https://agriservices.vercel.app"}})
-
-# --- API Configurations ---
 try:
-    gemini_api_key = os.getenv("GOOGLE_API_KEY")
-    if not gemini_api_key:
-        raise ValueError("GOOGLE_API_KEY not found. Please set it in your .env file.")
-    genai.configure(api_key=gemini_api_key)
-    gemini_model = genai.GenerativeModel('gemini-1.5-flash-latest')
-    print("Gemini API configured successfully.")
-except Exception as e:
-    print(f"Error configuring Gemini API: {e}")
-    gemini_model = None
+    gemini_api_key = os.getenv("GOOGLE_API_KEY") or st.secrets["GOOGLE_API_KEY"]
+    plant_id_api_key = os.getenv("PLANT_ID_API_KEY") or st.secrets["PLANT_ID_API_KEY"]
+except (KeyError, FileNotFoundError):
+    st.error("API keys not found. Please set them in your environment variables or Streamlit secrets.")
+    st.stop()
 
-plant_id_api_key = os.getenv("PLANT_ID_API_KEY")
-if not plant_id_api_key:
-    print("Warning: PLANT_ID_API_KEY not found. The disease detector will not work.")
 
-# --- Unified Chat Endpoint ---
-@app.route('/analyze-chat', methods=['POST'])
-def analyze_chat():
-    """
-    This single endpoint handles three cases:
-    1. Text-only questions -> Gemini
-    2. Image-only questions -> Plant.id -> Gemini
-    3. Image + Text questions -> Plant.id -> Gemini
-    """
-    if 'question' not in request.form and 'image' not in request.files:
-        return jsonify({'error': 'No question or image provided'}), 400
-
-    question = request.form.get('question', '')
-    image_file = request.files.get('image')
-
-    # --- Case 1: Text-only question ---
-    if not image_file:
-        if not gemini_model:
-            return jsonify({"error": "Gemini API is not configured on the server."}), 503
-        
-        prompt = f"""
-        You are a helpful and experienced agricultural assistant for Indian farmers.
-        A farmer has the following question: "{question}"
-        Provide a clear, practical, and actionable answer.
-        """
-        try:
-            response = gemini_model.generate_content(prompt)
-            return jsonify({'answer': response.text})
-        except Exception as e:
-            print(f"Error during Gemini API call: {e}")
-            return jsonify({'error': 'Failed to get a response from the AI model.'}), 500
-
-    # --- Case 2 & 3: Image is present ---
-    if not plant_id_api_key:
-        return jsonify({'error': 'Plant.id API key is not configured on the server.'}), 503
-
-    # Step 1: Analyze the image with Plant.id
+# --- API Call Functions ---
+def get_gemini_response(prompt):
+    """Calls the Gemini API and returns the text response."""
     try:
-        img_data = base64.b64encode(image_file.read()).decode('utf-8')
-        plant_id_payload = {
-            "images": [img_data],
-            "disease_details": ["common_names", "url", "description", "treatment"]
-        }
+        genai.configure(api_key=gemini_api_key)
+        model = genai.GenerativeModel('gemini-1.5-flash-latest')
+        response = model.generate_content(prompt)
+        return response.text
+    except Exception as e:
+        print(f"Error calling Gemini API: {e}")
+        return f"Sorry, I encountered an error trying to connect to the Gemini AI model: {e}"
+
+def analyze_plant_image(image_bytes):
+    """Analyzes an image with the Plant.id API and returns the JSON analysis."""
+    try:
+        img_data = base64.b64encode(image_bytes).decode('utf-8')
+        payload = {"images": [img_data], "disease_details": ["common_names", "description", "treatment"]}
         headers = {"Content-Type": "application/json", "Api-Key": plant_id_api_key}
         url = "https://api.plant.id/v2/health_assessment"
-        
-        res = requests.post(url, json=plant_id_payload, headers=headers)
+        res = requests.post(url, json=payload, headers=headers)
         res.raise_for_status()
-        plant_id_analysis = res.json()
-        plant_id_analysis_text = json.dumps(plant_id_analysis, indent=2)
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error calling Plant.id API: {e}")
-        details = e.response.text if e.response else "No response from API"
-        return jsonify({'error': f'Failed to analyze image with Plant.id API. Details: {details}'}), 502
-
-    # Step 2: Send the analysis and question to Gemini for a comprehensive answer
-    if not gemini_model:
-        return jsonify({"error": "Gemini API is not configured on the server."}), 503
-
-    gemini_prompt = f"""
-    You are an expert agricultural assistant. Your task is to provide a comprehensive and easy-to-understand answer to a farmer.
-    You have been given a technical analysis from a plant disease database in JSON format, and an optional question from the farmer.
-
-    **Farmer's Question:** "{question if question else 'Please analyze this image and tell me what is wrong with my plant and how to fix it.'}"
-
-    **Technical Disease Analysis (JSON from Plant.id):**
-    ```json
-    {plant_id_analysis_text}
-    ```
-
-    **Your Instructions:**
-    1.  **Interpret the JSON:** Read the JSON data. If `is_plant` is false, state that it doesn't look like a plant. If it is a plant, identify the main disease(s), their probability, and any suggested treatments. If the plant is healthy, state that clearly.
-    2.  **Summarize the Problem:** In simple, clear language, explain what the problem is. Start by directly addressing the farmer. For example, "It looks like your plant might have...".
-    3.  **Provide Actionable Solutions:** Based on the 'treatment' section of the JSON and your own knowledge, provide a list of clear, step-by-step solutions. If the `treatment` key exists, use it. Separate them into "Organic Solutions" and "Chemical Solutions".
-    4.  **Address the Farmer's Question:** Ensure your final answer directly addresses the farmer's original question if they provided one.
-    5.  **Friendly Tone:** Use a helpful and empathetic tone. Format the response with Markdown for readability (e.g., using bolding and lists).
-    """
-    
-    try:
-        response = gemini_model.generate_content(gemini_prompt)
-        return jsonify({'answer': response.text})
+        return res.json()
     except Exception as e:
-        print(f"Error during Gemini API call: {e}")
-        return jsonify({'error': 'Analyzed image but failed to get a final response from the AI model.'}), 500
+        print(f"Error calling Plant.id API: {e}")
+        return {"error": f"Failed to analyze image with Plant.id API: {e}"}
+
+
+# --- Streamlit App UI ---
+
+# Initialize session state for chat messages
+if "messages" not in st.session_state:
+    st.session_state.messages = [{"role": "assistant", "content": "Hello! How can I help you with your crops today?"}]
+
+# Display Title
+st.title("🌿 Agri-Assistant Chatbot")
+st.caption("Your AI-powered guide for farming success")
+
+# Display chat messages from history
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        # Check if there's an image to display with the message
+        if "image" in message:
+            st.image(message["image"], width=200)
+        # Display the text content
+        st.markdown(message["content"])
+
+# --- Chat Input and File Uploader ---
+# We use columns to place the file uploader "inside" the chat input area visually
+col1, col2 = st.columns([0.85, 0.15])
+
+with col1:
+    prompt = st.text_input("Ask a question about your crops...", key="chat_input", placeholder="Type your question or upload an image...")
+
+with col2:
+    st.write("") # for vertical alignment
+    st.write("") # for vertical alignment
+    uploaded_file = st.file_uploader(" ", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
+
+
+# --- Handle User Input ---
+if uploaded_file or prompt:
+    # Handle image upload
+    if uploaded_file:
+        image_bytes = uploaded_file.getvalue()
+        image = Image.open(io.BytesIO(image_bytes))
+        
+        # Add user message to chat
+        st.session_state.messages.append({"role": "user", "content": prompt or "Please analyze this image.", "image": image})
+        
+        with st.chat_message("user"):
+            st.image(image, width=200)
+            if prompt:
+                st.markdown(prompt)
+
+        # Show a thinking message
+        with st.chat_message("assistant"):
+            with st.spinner("Analyzing image and preparing response..."):
+                # 1. Get analysis from Plant.id
+                plant_id_analysis = analyze_plant_image(image_bytes)
+                plant_id_analysis_text = json.dumps(plant_id_analysis, indent=2)
+
+                # 2. Create a new prompt for Gemini
+                gemini_prompt = f"""
+                You are an expert agricultural assistant. A farmer asks: "{prompt if prompt else 'Please analyze this image and tell me what is wrong with my plant and how to fix it.'}"
+                Here is a technical analysis from a plant disease database:
+                ```json
+                {plant_id_analysis_text}
+                ```
+                Your task is to interpret the JSON and provide a simple, clear summary and actionable solutions for the farmer. Explain the main disease, its probability, and list any organic or chemical treatments found in the JSON. If the plant is healthy, state that. Use a friendly, helpful tone.
+                """
+                # 3. Get the final response from Gemini
+                response = get_gemini_response(gemini_prompt)
+                st.markdown(response)
+        
+        # Add assistant's response to chat history
+        st.session_state.messages.append({"role": "assistant", "content": response})
+
+    # Handle text-only input
+    elif prompt:
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.markdown(prompt)
+
+        with st.chat_message("assistant"):
+            with st.spinner("Thinking..."):
+                gemini_prompt = f"You are a helpful agricultural assistant for Indian farmers. Answer this question: \"{prompt}\""
+                response = get_gemini_response(gemini_prompt)
+                st.markdown(response)
+        
+        st.session_state.messages.append({"role": "assistant", "content": response})
+    
+    # Rerun the app to clear the input fields
+    st.rerun()
