@@ -109,10 +109,15 @@ const HomePage = () => {
                 <h1 className="Crop"><Translate>Crop</Translate></h1>
                 <h1 className="HEALTH-CARE"><Translate>HEALTH CARE</Translate></h1>
               </div>
-              <div className="a4" onClick={() => navigate('/merchantlogin')}>
-                <h1 className="Merchant"><Translate>Merchant</Translate></h1>
-                <h1 className="LOGIN"><Translate>LOGIN</Translate></h1>
-              </div>
+              <a 
+                href="https://agriservices.streamlit.app/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="a4"
+              >
+                <h1 className="Crop"><Translate>Crop</Translate></h1>
+                <h1 className="HEALTH-CARE"><Translate>HEALTH CARE</Translate></h1>
+              </a>
             </div>
           </div>
         );
