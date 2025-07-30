@@ -105,8 +105,6 @@ const HomePage = () => {
                 <h1 className="Pesticides"><Translate>Pesticides</Translate></h1>
                 <h1 className="order"><Translate>ORDER</Translate></h1>
               </div>
-              {/* --- CORRECTED NAVIGATION --- */}
-              {/* Using an anchor tag for the external link and removing the incorrect div */}
               <a 
                 href="https://agriservices.streamlit.app/" 
                 target="_blank" 
