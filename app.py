@@ -11,8 +11,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-# Enable CORS to allow your frontend to make requests
-CORS(app)
+
+# --- CORS Configuration ---
+# FIXED: Explicitly allow requests from your Vercel frontend.
+# This is the fix for the "blocked by CORS policy" error.
+CORS(app, resources={r"/analyze-chat": {"origins": "https://agriservices.vercel.app"}})
 
 # --- API Configurations ---
 try:
