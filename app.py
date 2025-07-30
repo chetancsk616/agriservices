@@ -61,6 +61,9 @@ if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "assistant", "content": "Hello! How can I help you with your crops today?"}]
 if "staged_image" not in st.session_state:
     st.session_state.staged_image = None
+# FIXED: Add a key for the file uploader to allow resetting it after submission
+if "uploader_key" not in st.session_state:
+    st.session_state.uploader_key = 0
 
 # Display Title and Subheader
 st.title("🌿 Agri-Assistant Chatbot")
@@ -82,7 +85,13 @@ col1, col2 = st.columns([0.2, 0.8])
 
 # File uploader button in the first column
 with col1:
-    uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
+    # FIXED: Use the key from session state to control the uploader
+    uploaded_file = st.file_uploader(
+        "Upload an image", 
+        type=["jpg", "jpeg", "png"], 
+        label_visibility="collapsed", 
+        key=f"uploader_{st.session_state.uploader_key}"
+    )
     if uploaded_file:
         # When a file is uploaded, stage it in the session state
         st.session_state.staged_image = {
@@ -90,21 +99,21 @@ with col1:
             "caption": uploaded_file.name
         }
 
-# Display the staged image preview and a remove button
+# Display the staged image preview and a manual remove button
 if st.session_state.staged_image:
     st.image(st.session_state.staged_image["bytes"], caption=f"Ready to send: {st.session_state.staged_image['caption']}", width=100)
     if st.button("Remove Image", key="remove_image"):
         st.session_state.staged_image = None
-        st.rerun() # Rerun to update the UI after removing the image
+        # FIXED: Increment the key to ensure the uploader widget itself is cleared
+        st.session_state.uploader_key += 1
+        st.rerun() 
 
 # Use st.chat_input for the text and main send button
 if prompt := st.chat_input("Ask your question here..."):
     
-    # Create the user message object
     user_message = {"role": "user", "content": prompt}
     staged_image_data = st.session_state.staged_image
     
-    # If an image is staged, add it to the message and display it
     if staged_image_data:
         user_message["image"] = staged_image_data["bytes"]
         with st.chat_message("user"):
@@ -119,13 +128,9 @@ if prompt := st.chat_input("Ask your question here..."):
     # --- API Call Logic ---
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-            # Case 1: Image is present (staged)
             if staged_image_data:
-                # 1. Get analysis from Plant.id
                 plant_id_analysis = analyze_plant_image(staged_image_data["bytes"])
                 plant_id_analysis_text = json.dumps(plant_id_analysis, indent=2)
-
-                # 2. Create a new prompt for Gemini
                 gemini_prompt = f"""
                 You are an expert agricultural assistant. A farmer asks: "{prompt if prompt else 'Please analyze this image and tell me what is wrong with my plant and how to fix it.'}"
                 Here is a technical analysis from a plant disease database:
@@ -134,21 +139,19 @@ if prompt := st.chat_input("Ask your question here..."):
                 ```
                 Your task is to interpret the JSON and provide a simple, clear summary and actionable solutions for the farmer. Explain the main disease, its probability, and list any organic or chemical treatments found in the JSON. If the plant is healthy, state that. Use a friendly, helpful tone.
                 """
-                # 3. Get the final response from Gemini
                 response = get_gemini_response(gemini_prompt)
                 st.markdown(response)
-
-            # Case 2: Text-only input
             else:
                 gemini_prompt = f"You are a helpful agricultural assistant for Indian farmers. Answer this question: \"{prompt}\""
                 response = get_gemini_response(gemini_prompt)
                 st.markdown(response)
 
-    # Add assistant's response to chat history
     st.session_state.messages.append({"role": "assistant", "content": response})
     
     # CRITICAL FIX: Clear the staged image from session state after processing
     st.session_state.staged_image = None
     
-    # Rerun to update the display and clear inputs
+    # FIXED: Increment the key to reset the file uploader widget, ensuring it's empty on the next run
+    st.session_state.uploader_key += 1
+    
     st.rerun()
