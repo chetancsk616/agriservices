@@ -1,4 +1,3 @@
-# app.py
 import os
 import base64
 import requests
@@ -19,7 +18,6 @@ st.set_page_config(
 
 # --- Load API Keys ---
 # Use Streamlit's secrets management for deployment
-# For local development, you can use a .env file
 load_dotenv()
 try:
     gemini_api_key = os.getenv("GOOGLE_API_KEY") or st.secrets["GOOGLE_API_KEY"]
@@ -58,56 +56,73 @@ def analyze_plant_image(image_bytes):
 
 # --- Streamlit App UI ---
 
-# Initialize session state for chat messages
+# Initialize session state
 if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "assistant", "content": "Hello! How can I help you with your crops today?"}]
+if "staged_image" not in st.session_state:
+    st.session_state.staged_image = None
 
-# Display Title
+# Display Title and Subheader
 st.title("🌿 Agri-Assistant Chatbot")
 st.caption("Your AI-powered guide for farming success")
 
 # Display chat messages from history
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
-        # Check if there's an image to display with the message
-        if "image" in message:
+        if "image" in message and message["image"] is not None:
             st.image(message["image"], width=200)
-        # Display the text content
-        st.markdown(message["content"])
+        if "content" in message and message["content"] is not None:
+            st.markdown(message["content"])
 
-# --- Chat Input and File Uploader ---
-# We use columns to place the file uploader "inside" the chat input area visually
-col1, col2 = st.columns([0.85, 0.15])
+# --- Combined Input Area at the bottom ---
+st.divider()
 
+# Create columns for the input layout
+col1, col2 = st.columns([0.2, 0.8])
+
+# File uploader button in the first column
 with col1:
-    prompt = st.text_input("Ask a question about your crops...", key="chat_input", placeholder="Type your question or upload an image...")
-
-with col2:
-    st.write("") # for vertical alignment
-    st.write("") # for vertical alignment
-    uploaded_file = st.file_uploader(" ", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
-
-
-# --- Handle User Input ---
-if uploaded_file or prompt:
-    # Handle image upload
+    uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
     if uploaded_file:
-        image_bytes = uploaded_file.getvalue()
-        image = Image.open(io.BytesIO(image_bytes))
-        
-        # Add user message to chat
-        st.session_state.messages.append({"role": "user", "content": prompt or "Please analyze this image.", "image": image})
-        
-        with st.chat_message("user"):
-            st.image(image, width=200)
-            if prompt:
-                st.markdown(prompt)
+        # When a file is uploaded, stage it in the session state
+        st.session_state.staged_image = {
+            "bytes": uploaded_file.getvalue(),
+            "caption": uploaded_file.name
+        }
 
-        # Show a thinking message
-        with st.chat_message("assistant"):
-            with st.spinner("Analyzing image and preparing response..."):
+# Display the staged image preview and a remove button
+if st.session_state.staged_image:
+    st.image(st.session_state.staged_image["bytes"], caption=f"Ready to send: {st.session_state.staged_image['caption']}", width=100)
+    if st.button("Remove Image", key="remove_image"):
+        st.session_state.staged_image = None
+        st.rerun() # Rerun to update the UI after removing the image
+
+# Use st.chat_input for the text and main send button
+if prompt := st.chat_input("Ask your question here..."):
+    
+    # Create the user message object
+    user_message = {"role": "user", "content": prompt}
+    staged_image_data = st.session_state.staged_image
+    
+    # If an image is staged, add it to the message and display it
+    if staged_image_data:
+        user_message["image"] = staged_image_data["bytes"]
+        with st.chat_message("user"):
+            st.image(staged_image_data["bytes"], width=200)
+            st.markdown(prompt)
+    else:
+        with st.chat_message("user"):
+            st.markdown(prompt)
+            
+    st.session_state.messages.append(user_message)
+
+    # --- API Call Logic ---
+    with st.chat_message("assistant"):
+        with st.spinner("Thinking..."):
+            # Case 1: Image is present (staged)
+            if staged_image_data:
                 # 1. Get analysis from Plant.id
-                plant_id_analysis = analyze_plant_image(image_bytes)
+                plant_id_analysis = analyze_plant_image(staged_image_data["bytes"])
                 plant_id_analysis_text = json.dumps(plant_id_analysis, indent=2)
 
                 # 2. Create a new prompt for Gemini
@@ -122,23 +137,18 @@ if uploaded_file or prompt:
                 # 3. Get the final response from Gemini
                 response = get_gemini_response(gemini_prompt)
                 st.markdown(response)
-        
-        # Add assistant's response to chat history
-        st.session_state.messages.append({"role": "assistant", "content": response})
 
-    # Handle text-only input
-    elif prompt:
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
-
-        with st.chat_message("assistant"):
-            with st.spinner("Thinking..."):
+            # Case 2: Text-only input
+            else:
                 gemini_prompt = f"You are a helpful agricultural assistant for Indian farmers. Answer this question: \"{prompt}\""
                 response = get_gemini_response(gemini_prompt)
                 st.markdown(response)
-        
-        st.session_state.messages.append({"role": "assistant", "content": response})
+
+    # Add assistant's response to chat history
+    st.session_state.messages.append({"role": "assistant", "content": response})
     
-    # Rerun the app to clear the input fields
+    # CRITICAL FIX: Clear the staged image from session state after processing
+    st.session_state.staged_image = None
+    
+    # Rerun to update the display and clear inputs
     st.rerun()
