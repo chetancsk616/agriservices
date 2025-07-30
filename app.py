@@ -115,6 +115,3 @@ def analyze_chat():
     except Exception as e:
         print(f"Error during Gemini API call: {e}")
         return jsonify({'error': 'Analyzed image but failed to get a final response from the AI model.'}), 500
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
