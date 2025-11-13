@@ -986,7 +986,13 @@ body.light-theme .reset-box input::placeholder {
   font-family: 'Noto Sans', Arial, sans-serif;
   font-weight: 700;
   text-align: center;
+  color: var(--text);
 }
+
+body.light-theme .h {
+  color: #1a237e; /* Dark blue for visibility on light background */
+}
+
 .h.en { font-family: 'Noto Sans', Arial, sans-serif; }
 .h.te { font-family: 'Noto Sans Telugu', Arial, sans-serif; }
 .h.hi { font-family: 'Noto Sans Devanagari', Arial, sans-serif; }
