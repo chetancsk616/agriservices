@@ -107,35 +107,30 @@ export default function ProductInfo() {
     setPopupNav('/cart');
   };
 
-  if (!product) {
-    return (
-        <div style={{ padding: 20, color: 'white', textAlign: 'center' }}>
-            <Translate>Loading…</Translate>
-        </div>
-    );
-  }
+  if (!product) return <div className="loading-box"><Translate>Loading…</Translate></div>;
 
   return (
-    <div style={{ maxWidth: 600, margin: 'auto', padding: 20, fontFamily: 'sans-serif', color: 'white' }} className='scroll1'>
-      <button onClick={() => navigate("/products")} style={{ color: "white", background: "none", border: "none", marginBottom: '10px', fontSize: '30px' }}>&larr;</button>
-      <img src={product.image_url || 'https://placehold.co/600x400/243b55/ffffff?text=Product'} alt={product.name} style={{ width: '100%', maxHeight: 400, objectFit: 'contain', borderRadius: '10px' }} />
-      <h2>{product.name}</h2> {/* Dynamic content from DB - should not be translated */}
-      <h3 style={{ color: '#4caf50' }}>₹{product.price}</h3>
-      <p style={{ whiteSpace: 'pre-wrap' }}>{product.discription}</p> {/* Dynamic content from DB */}
-      <button onClick={addCart} style={{ marginTop: '20px', padding: '10px 20px', borderRadius: '6px', background: '#28a745', color: 'white', border: 'none', fontSize: '16px', cursor: 'pointer' }}>
-        <Translate>Add to Cart</Translate>
-      </button>
+    <div className='scroll1'>
+      <button className="back-btn" onClick={() => navigate('/products')}>&larr;</button>
 
-      {popupMessage && (
-        <Popup
-          message={popupMessage}
-          onClose={() => {
-            setPopupMessage('');
-            setPopupNav(null);
-          }}
-          navigateTo={popupNav}
-        />
-      )}
+      <div className="detail-panel">
+        <img src={product.image_url || 'https://placehold.co/600x400/243b55/ffffff?text=Product'} alt={product.name} className="product-img-large" />
+        <h2>{product.name}</h2>
+        <h3 className="product-price">₹{product.price}</h3>
+  <p className="prewrap">{product.discription}</p>
+        <button onClick={addCart} className="btn-add mt-20"><Translate>Add to Cart</Translate></button>
+
+        {popupMessage && (
+          <Popup
+            message={popupMessage}
+            onClose={() => {
+              setPopupMessage('');
+              setPopupNav(null);
+            }}
+            navigateTo={popupNav}
+          />
+        )}
+      </div>
     </div>
   );
 }

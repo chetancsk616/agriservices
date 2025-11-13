@@ -20,13 +20,13 @@ const Popup = ({ message, onClose, navigateTo, children, showConfirm }) => {
   return (
     <div className="popup-overlay">
       <div className="popup-box">
-        {message && <p>{message}</p>}
-        {children}
-        <div style={{ marginTop: '10px' }}>
+  {message && <p>{message}</p>}
+  {children}
+  <div className="popup-actions">
           {showConfirm ? (
             <>
               <button onClick={showConfirm}><Translate>Confirm</Translate></button>
-              <button onClick={handleClose} style={{ marginLeft: '10px' }}><Translate>Cancel</Translate></button>
+              <button onClick={handleClose}><Translate>Cancel</Translate></button>
             </>
           ) : (
             <button onClick={handleClose}><Translate>OK</Translate></button>
@@ -104,22 +104,7 @@ const MyBookings = () => {
     setCancelId(null);
   };
 
-  const containerStyle = {
-    padding: '20px',
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-    gap: '20px',
-  };
-
-  const itemStyle = {
-    border: '1px solid #ccc',
-    borderRadius: '8px',
-    padding: '1rem',
-    backgroundColor: 'rgba(255, 255, 255, 0.07)',
-    color: 'white',
-    display: 'flex',
-    flexDirection: 'column',
-  };
+  // layout and item styling moved to CSS classes
 
   const total = bookings.reduce((sum, b) => {
     const days = (new Date(b.end_date) - new Date(b.start_date)) / (1000 * 60 * 60 * 24) + 1;
@@ -128,28 +113,19 @@ const MyBookings = () => {
 
   return (
     <div className='scroll1'>
-      <button
-        type="button"
-        style={{ width: 'fit-content', backgroundColor: 'transparent', border: 'none', padding: '1rem' }}
-        onClick={() => navigate("/vehicles")}
-      >
-        <span style={{ fontSize: '30px', color: 'white' }}>&larr;</span>
-      </button>
 
-      <h1 style={{ textAlign: 'center', color: 'white' }}><Translate>Your Bookings</Translate></h1>
+      <button type="button" className="back-btn" onClick={() => navigate('/vehicles')}>&larr;</button>
 
-      <div id="booking-container" style={containerStyle}>
+      <h1 className="page-title"><Translate>Your Bookings</Translate></h1>
+
+      <div id="booking-container" className="booking-grid">
         {bookings.length === 0 ? (
-          <p style={{ color: 'white', gridColumn: '1 / -1', textAlign: 'center' }}><Translate>No bookings found.</Translate></p>
+          <p className="booking-empty"><Translate>No bookings found.</Translate></p>
         ) : (
           bookings.map((b) => (
-            <div key={b.id} style={itemStyle}>
-              <img
-                src={b.vehicles?.image_url || 'https://placehold.co/400x250/243b55/ffffff?text=Vehicle'}
-                alt={b.vehicles?.name}
-                style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '6px' }}
-              />
-              <h3 style={{ marginTop: '1rem' }}>{b.vehicles?.name}</h3>
+            <div key={b.id} className="booking-card">
+              <img src={b.vehicles?.image_url || 'https://placehold.co/400x250/243b55/ffffff?text=Vehicle'} alt={b.vehicles?.name} className="booking-img" />
+              <h3 className="card-title">{b.vehicles?.name}</h3>
               <p><Translate>Type:</Translate> {b.vehicles?.type}</p>
               <p><Translate>Status:</Translate> <Translate>{b.status}</Translate></p>
               <p><Translate>From:</Translate> {b.start_date}</p>
@@ -157,20 +133,7 @@ const MyBookings = () => {
               <p>₹{b.vehicles?.price_per_day} <Translate>/day</Translate></p>
 
               {['Pending', 'Confirmed'].includes(b.status) && (
-                <button
-                  onClick={() => setCancelId(b.id)}
-                  style={{
-                    marginTop: 'auto', // Pushes button to the bottom
-                    padding: '0.5rem 1rem',
-                    background: '#dc3545',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '5px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <Translate>Cancel Booking</Translate>
-                </button>
+                <button onClick={() => setCancelId(b.id)} className="btn-danger btn-cancel"><Translate>Cancel Booking</Translate></button>
               )}
             </div>
           ))
@@ -178,7 +141,7 @@ const MyBookings = () => {
       </div>
 
       {bookings.length > 0 && (
-        <div className="booking-total" style={{ padding: '20px', fontWeight: 'bold', color: 'white', fontSize: '1.2rem' }}>
+        <div className="booking-total">
           <Translate>Total Booking Cost:</Translate> ₹{total}
         </div>
       )}

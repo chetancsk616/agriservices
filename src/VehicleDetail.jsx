@@ -23,7 +23,7 @@ const Popup = ({ message, onClose, navigateTo, children, showConfirm }) => {
       <div className="popup-box">
         {message && <p>{message}</p>}
         {children}
-        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '10px' }}>
+  <div className="popup-actions">
           {showConfirm ? (
             <>
               <button onClick={showConfirm}><Translate>Confirm</Translate></button>
@@ -114,61 +114,20 @@ const VehicleDetail = () => {
     setShowDateForm(false);
   };
 
-  if (!vehicle) return <div style={{ color: 'white', textAlign: 'center', padding: '2rem' }}><Translate>Loading...</Translate></div>;
+  if (!vehicle) return <div className="loading-box"><Translate>Loading...</Translate></div>;
 
   return (
-    <div className='scroll1' style={{ padding: '20px', color: 'white' }}>
-      <button
-        onClick={() => navigate(-1)}
-        style={{
-          background: "none",
-          border: "none",
-          color: "white",
-          fontSize: "1.2rem",
-          marginBottom: '10px',
-          cursor: 'pointer'
-        }}
-      >
-        &larr; <Translate>Back</Translate>
-      </button>
+    <div className='scroll1'>
+      <button onClick={() => navigate(-1)} className="back-btn">&larr; <Translate>Back</Translate></button>
 
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          maxWidth: '500px',
-          margin: '0 auto',
-          background: 'rgba(255, 255, 255, 0.1)',
-          padding: '20px',
-          borderRadius: '12px',
-          boxShadow: '0 8px 32px 0 rgba(134, 141, 240, 0.37)',
-        }}
-      >
-        <img
-          src={vehicle.image_url || 'https://placehold.co/400x250/243b55/ffffff?text=Vehicle'}
-          alt={vehicle.name}
-          style={{ width: '100%', height: '250px', objectFit: 'cover', borderRadius: '10px' }}
-        />
-        <h2 style={{ marginTop: '15px' }}>{vehicle.name}</h2>
+      <div className="detail-panel">
+        <img src={vehicle.image_url || 'https://placehold.co/400x250/243b55/ffffff?text=Vehicle'} alt={vehicle.name} className="detail-img" />
+  <h2 className="detail-title">{vehicle.name}</h2>
         <p><Translate>Type:</Translate> {vehicle.type}</p>
         <p><Translate>Status:</Translate> <Translate>{vehicle.status}</Translate></p>
-        <p style={{ fontWeight: 'bold' }}>₹{vehicle.price_per_day}<Translate>/day</Translate></p>
+        <p className="price">₹{vehicle.price_per_day}<Translate>/day</Translate></p>
 
-        <button
-          onClick={handleBooking}
-          style={{
-            marginTop: '20px',
-            padding: '12px',
-            borderRadius: '8px',
-            background: '#007bff',
-            color: 'white',
-            border: 'none',
-            fontSize: '1rem',
-            cursor: 'pointer'
-          }}
-        >
-          <Translate>Book This Vehicle</Translate>
-        </button>
+  <button onClick={handleBooking} className="btn-add mt-20"><Translate>Book This Vehicle</Translate></button>
       </div>
 
       {showDateForm && !popupMessage && (
@@ -180,14 +139,14 @@ const VehicleDetail = () => {
           }}
           showConfirm={handleDateConfirm}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+          <div className="form-column">
+            <label className="label-column">
               <Translate>Start Date:</Translate>
-              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} style={{width: '100%', padding: '8px', marginTop: '5px'}} />
+              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
             </label>
-            <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <label className="label-column">
               <Translate>End Date:</Translate>
-              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} style={{width: '100%', padding: '8px', marginTop: '5px'}} />
+              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
             </label>
           </div>
         </Popup>

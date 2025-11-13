@@ -4,6 +4,7 @@ import supabase from '/src/supabaseClient';
 import './style.css';
 import { LanguageContext } from './LanguageContext.jsx';
 import { translateText } from './translationService.js';
+import { useAuth } from './AuthContext.jsx';
 import Translate from './Translation.jsx';
 
 // It's good practice to have a shared Popup component, but defining it here is fine.
@@ -18,7 +19,7 @@ const Popup = ({ message, onClose, navigateTo, children, showConfirm }) => {
       <div className="popup-box">
         {message && <p>{message}</p>}
         {children}
-        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '10px' }}>
+        <div className="popup-actions">
           {showConfirm ? (
             <>
               <button onClick={showConfirm}><Translate>Confirm</Translate></button>
@@ -35,9 +36,11 @@ const Popup = ({ message, onClose, navigateTo, children, showConfirm }) => {
 
 const VehicleList = () => {
   const [vehicles, setVehicles] = useState([]);
+  const [sortOption, setSortOption] = useState('newest');
   const [hoveredCardId, setHoveredCardId] = useState(null);
   const navigate = useNavigate();
   const { language } = useContext(LanguageContext);
+  const { currentUser } = useAuth();
 
   // State for popups and booking flow
   const [popupMessage, setPopupMessage] = useState('');
@@ -48,17 +51,53 @@ const VehicleList = () => {
 
   useEffect(() => {
     const fetchVehicles = async () => {
-      const { data, error } = await supabase
-        .from('vehicles')
-        .select('*')
-        .eq('status', 'Available');
+      let column = 'created_at';
+      let ascending = false;
+      switch (sortOption) {
+        case 'newest': column = 'created_at'; ascending = false; break;
+        case 'oldest': column = 'created_at'; ascending = true; break;
+        case 'price_asc': column = 'price_per_day'; ascending = true; break;
+        case 'price_desc': column = 'price_per_day'; ascending = false; break;
+        case 'name_asc': column = 'name'; ascending = true; break;
+        case 'name_desc': column = 'name'; ascending = false; break;
+        default: column = 'created_at'; ascending = false;
+      }
 
-      if (error) console.error('Error fetching vehicles:', error);
-      else setVehicles(data);
+      try {
+        const { data, error } = await supabase
+          .from('vehicles')
+          .select('*')
+          .eq('status', 'Available')
+          .order(column, { ascending });
+        if (error) throw error;
+        setVehicles(data || []);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('Error fetching vehicles (ordered):', err);
+        // fallback to ordering by id or bare select
+        try {
+          const { data: d2, error: e2 } = await supabase.from('vehicles').select('*').eq('status', 'Available').order('id', { ascending: column === 'created_at' ? false : ascending });
+          if (!e2) {
+            setVehicles(d2 || []);
+            return;
+          }
+        } catch (e) {
+          // ignore
+        }
+
+        const { data: d3, error: e3 } = await supabase.from('vehicles').select('*').eq('status', 'Available');
+        if (e3) {
+          // eslint-disable-next-line no-console
+          console.error('Error fetching vehicles (fallback):', e3);
+          setVehicles([]);
+        } else {
+          setVehicles(d3 || []);
+        }
+      }
     };
 
     fetchVehicles();
-  }, []);
+  }, [sortOption]);
 
   const handleBookClick = async (vehicleId) => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -102,79 +141,48 @@ const VehicleList = () => {
     }
   };
 
-  const containerStyle = {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-    gap: '20px',
-    padding: '20px',
-  };
-
   return (
     <div className='scroll1'>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px' }}>
-        <button
-          onClick={() => navigate("/main/0")}
-          style={{ background: 'none', border: 'none', color: 'white', fontSize: '30px', cursor: 'pointer' }}
-        >
-          &larr;
-        </button>
-        <button
-          onClick={() => navigate("/mybookings")}
-          style={{
-            color: "white",
-            background: "rgba(255, 255, 255, 0.1)",
-            border: "1px solid white",
-            borderRadius: '8px',
-            fontSize: "1rem",
-            padding: '0.5rem 1rem',
-            cursor: "pointer"
-          }}
-        >
-          <Translate>My Bookings</Translate>
-        </button>
+      <div className="page-header">
+        <button className="back-btn" onClick={() => navigate('/main/0')}>&larr;</button>
+        <div className="header-actions">
+          <button onClick={() => navigate('/mybookings')} className="header-button"><Translate>My Bookings</Translate></button>
+          {currentUser?.role === 'merchant' && (
+            <button onClick={() => navigate('/add-vehicle')} className="header-button"><Translate>Add Vehicle</Translate></button>
+          )}
+        </div>
       </div>
 
-      <h1 style={{ textAlign: 'center' }}><Translate>Available Vehicles</Translate></h1>
+      <h1 className="page-title"><Translate>Available Vehicles</Translate></h1>
 
-      <div style={containerStyle}>
+      <div style={{display:'flex', justifyContent:'flex-end', padding: '0 1.25rem', marginTop: '-1.2rem'}}>
+        <div style={{display:'flex', alignItems:'center', gap: '0.5rem'}}>
+          <label style={{color:'var(--muted)'}}><Translate>Sort:</Translate></label>
+          <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="price_asc">Price: Low to High</option>
+            <option value="price_desc">Price: High to Low</option>
+            <option value="name_asc">Name A–Z</option>
+            <option value="name_desc">Name Z–A</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="vehicle-grid">
         {vehicles.map((v) => (
-          <div
-            key={v.id}
-            style={{
-              padding: '1rem',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              boxShadow: hoveredCardId === v.id ? '0 8px 32px 0 rgba(134, 141, 240, 0.37)' : '0 2px 5px rgba(0,0,0,0.1)',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              background: 'rgba(255, 255, 255, 0.1)',
-              transform: hoveredCardId === v.id ? 'scale(1.02)' : 'scale(1)',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-            }}
-            onMouseEnter={() => setHoveredCardId(v.id)}
-            onMouseLeave={() => setHoveredCardId(null)}
-          >
+            <div key={v.id} className={`vehicle-card ${hoveredCardId===v.id? 'hovered':''}`} onMouseEnter={() => setHoveredCardId(v.id)} onMouseLeave={() => setHoveredCardId(null)}>
             <div onClick={() => navigate(`/vehicle/${v.id}`)}>
-              <img
-                src={v.image_url || 'https://placehold.co/220x150/243b55/ffffff?text=Vehicle'}
-                alt={v.name}
-                style={{ width: '100%', height: '150px', objectFit: 'contain', borderRadius: '4px' }}
-              />
-              <h3 style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '0.5rem' }}>
-                {v.name}
-              </h3>
-              <p style={{ fontWeight: 'bold' }}>₹{v.price_per_day}<Translate>/day</Translate></p>
+              <img src={v.image_url || 'https://placehold.co/220x150/243b55/ffffff?text=Vehicle'} alt={v.name} className="vehicle-img" />
+              <h3 className="card-title">{v.name}</h3>
+              <p className="price">₹{v.price_per_day}<Translate>/day</Translate></p>
             </div>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleBookClick(v.id);
-              }}
-              style={{ padding: '8px', borderRadius: '5px', background: '#007bff', color: 'white', border: 'none', marginTop: '10px', cursor: 'pointer' }}
-            >
-              <Translate>Book Now</Translate>
-            </button>
+            <div className="actions-col">
+              <button onClick={(e)=>{ e.stopPropagation(); handleBookClick(v.id); }} className="btn-add"><Translate>Book Now</Translate></button>
+              {(((currentUser?.role === 'merchant') && v.merchant_id === currentUser.id) || currentUser?.role === 'admin') && (
+                <button onClick={(e)=>{ e.stopPropagation(); navigate(`/edit-vehicle/${v.id}`); }} className="btn-edit"><Translate>Edit Vehicle</Translate></button>
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -195,17 +203,17 @@ const VehicleList = () => {
           onClose={() => setBookingVehicleId(null)}
           showConfirm={handleConfirmBooking}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            <h3 style={{ marginTop: 0 }}><Translate>Select Booking Dates</Translate></h3>
-            <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-              <Translate>Start Date:</Translate>
-              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} style={{ width: '100%', padding: '8px', marginTop: '5px' }} />
-            </label>
-            <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-              <Translate>End Date:</Translate>
-              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} style={{ width: '100%', padding: '8px', marginTop: '5px' }} />
-            </label>
-          </div>
+          <div className="form-column">
+              <h3 className="no-top"><Translate>Select Booking Dates</Translate></h3>
+              <label className="label-column">
+                <Translate>Start Date:</Translate>
+                <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+              </label>
+              <label className="label-column">
+                <Translate>End Date:</Translate>
+                <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+              </label>
+            </div>
         </Popup>
       )}
     </div>

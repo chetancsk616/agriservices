@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { LanguageProvider } from './LanguageContext.jsx';
+import { ThemeProvider } from './ThemeContext.jsx';
+import ThemeToggle from './ThemeToggle.jsx';
 import LanguageSelection from './LanguageSelection'; 
 import HomePage from './HomePage';
 import FarmerSignup from './FarmerSignup';
@@ -16,9 +18,14 @@ import VehicleList from './VehicleList';
 import VehicleDetail from './VehicleDetail';
 import MyBookings from './MyBookings';
 import AIAssistantPage from './AIAssistantPage';
+import AddVehicle from './AddVehicle';
+import AddProduct from './AddProduct';
+import EditProduct from './EditProduct';
+import EditVehicle from './EditVehicle';
 
 const App = () => {
   return (
+    <ThemeProvider>
     <LanguageProvider>
     <Router>
       <Routes>
@@ -33,13 +40,22 @@ const App = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/product/:id" element={<ProductInfo />} />
+  <Route path="/add-product" element={<AddProduct />} />
+  <Route path="/edit-product/:id" element={<EditProduct />} />
+  <Route path="/edit-product/:id" element={<EditProduct />} />
         <Route path="/vehicles" element={<VehicleList />} />
         <Route path="/vehicle/:id" element={<VehicleDetail />} />
         <Route path="/mybookings" element={<MyBookings />} />
         <Route path="/aiassistantpage" element={<AIAssistantPage />} />
+        <Route path="/add-vehicle" element={<AddVehicle />} />
+        <Route path="/edit-vehicle/:id" element={<EditVehicle />} />
       </Routes>
     </Router>
     </LanguageProvider>
+    <div className="theme-toggle-wrapper">
+      <ThemeToggle />
+    </div>
+    </ThemeProvider>
   );
 };
 

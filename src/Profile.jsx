@@ -162,7 +162,7 @@ const Profile = () => {
     }
   };
 
-  if (loading) return <div style={{color: 'white', textAlign: 'center', padding: '2rem'}}><Translate>Loading user...</Translate></div>;
+  if (loading) return <div className="loading-box"><Translate>Loading user...</Translate></div>;
 
   const renderContent = () => {
     switch (selectedPage) {
@@ -205,7 +205,7 @@ const Profile = () => {
           <div className="card2">
             <h2><Translate>Logout</Translate></h2>
             <p><Translate>Are you sure you want to log out?</Translate></p>
-            <button onClick={handleLogout} style={{backgroundColor: '#dc3545', color: 'white'}}>
+            <button onClick={handleLogout} className="btn-danger">
               <Translate>Logout</Translate>
             </button>
           </div>
@@ -250,22 +250,24 @@ const Profile = () => {
   return (
     <div className='profile'>
       <div className="sidebar">
-        <button
-          type="button"
-          style={{ width: "fit-content", backgroundColor: "rgba(255, 255, 255, 0)", border: 'none' }}
-          onClick={() => navigate("/main/0")}
-        >
-          <span style={{ color:"#e0e0e0", fontSize: '30px' }}>&larr;</span>
+        <button type="button" className="back-btn" onClick={() => navigate('/main/0')}></button>
+        <button value="0" onClick={(e) => setSelectedPage(e.target.value)}>
+          <Translate>Personal Info</Translate>
         </button>
-        <button value="0" onClick={(e) => setSelectedPage(e.target.value)}><Translate>Personal Info</Translate></button>
-        <button value="1" onClick={(e) => setSelectedPage(e.target.value)}><Translate>Privacy Settings</Translate></button>
-        <button value="2" onClick={(e) => setSelectedPage(e.target.value)}><Translate>Reset Password</Translate></button>
-        <button value="3" onClick={(e) => setSelectedPage(e.target.value)}><Translate>Feedback/Review</Translate></button>
-        <button value="4" onClick={(e) => setSelectedPage(e.target.value)}><Translate>LogOut</Translate></button>
+        <button value="1" onClick={(e) => setSelectedPage(e.target.value)}>
+          <Translate>Privacy Settings</Translate>
+        </button>
+        <button value="2" onClick={(e) => setSelectedPage(e.target.value)}>
+          <Translate>Reset Password</Translate>
+        </button>
+        <button value="3" onClick={(e) => setSelectedPage(e.target.value)}>
+          <Translate>Feedback/Review</Translate>
+        </button>
+        <button value="4" onClick={(e) => setSelectedPage(e.target.value)}>
+          <Translate>LogOut</Translate>
+        </button>
       </div>
-      <div id="app">
-        {renderContent()}
-      </div>
+      {renderContent()}
       <Popup
         message={popupMessage}
         onClose={() => {

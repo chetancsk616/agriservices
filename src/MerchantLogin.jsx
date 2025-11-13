@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './style.css';
 import supabase from '/src/supabaseClient';
 import { LanguageContext } from './LanguageContext.jsx';
+import { useAuth } from './AuthContext.jsx';
 import { translateText } from './translationService.js';
 import Translate from './Translation.jsx';
 
@@ -25,6 +26,7 @@ const MerchantLogin = () => {
   const [placeholders, setPlaceholders] = useState({ email: 'Email', password: 'Password' });
   const navigate = useNavigate();
   const { language } = useContext(LanguageContext);
+  const { setCurrentUser } = useAuth();
 
   useEffect(() => {
     const translatePlaceholders = async () => {
@@ -69,18 +71,26 @@ const MerchantLogin = () => {
 
     const { data: userData } = await supabase.auth.getUser();
     const user = userData?.user;
-    const actualRole = user?.user_metadata?.role;
+    let actualRole = user?.user_metadata?.role;
 
+    // If no role assigned, treat the user as 'admin' per app policy
     if (!actualRole) {
-      const msg = await translateText('Login failed: No role assigned to this user.', language);
+      // do not block login — treat missing role as admin
+      actualRole = 'admin';
+    }
+
+    // allow merchants or admins to login here
+    if (actualRole !== 'merchant' && actualRole !== 'admin') {
+      const msg = await translateText('Login failed: You are not authorized to login as a merchant.', language);
       showPopup(msg);
       return;
     }
 
-    if (actualRole !== 'merchant') {
-      const msg = await translateText('Login failed: You are not authorized to login as a merchant.', language);
-      showPopup(msg);
-      return;
+    // Set current user in AuthContext so role-based UI can render
+    try {
+      setCurrentUser({ id: user.id, email: user.email, role: actualRole });
+    } catch (e) {
+      // ignore
     }
 
     navigate('/main/0'); // Navigate directly on success
@@ -110,52 +120,21 @@ const MerchantLogin = () => {
 
   return (
     <>
-      <form className="box" style={{ overflow: 'auto', height: 'calc(100vh - 268px)', scrollbarWidth: 'none' }}>
-        <button
-          type="button"
-          style={{
-            color: "white",
-            width: "100%",
-            backgroundColor: "rgba(255, 255, 255, 0)",
-            border: "none",
-            textAlign: "left",
-            fontSize: "30px"
-          }}
-          onClick={() => navigate(-1)}
-        >
-          &larr;
-        </button>
+      <form className="box box-scroll">
+        <button type="button" className="back-btn" onClick={() => navigate(-1)}>&larr;</button>
 
         <h1><Translate>Merchant Login</Translate></h1>
 
-        <input
-          type="email"
-          placeholder={placeholders.email}
-          id="email"
-          value={form.email}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          placeholder={placeholders.password}
-          id="password"
-          value={form.password}
-          onChange={handleChange}
-          required
-        />
+        <input type="email" placeholder={placeholders.email} id="email" value={form.email} onChange={handleChange} required />
+        <input type="password" placeholder={placeholders.password} id="password" value={form.password} onChange={handleChange} required />
         <button type="button" onClick={handleLogin}><Translate>Submit</Translate></button>
 
         <p>
-          <span style={{ color: '#add8e6', cursor: 'pointer', textDecoration: 'underline' }} onClick={handleResetPassword}>
-            <Translate>Forgot Password?</Translate>
-          </span>
+          <span className="linkish" onClick={handleResetPassword}><Translate>Forgot Password?</Translate></span>
         </p>
         <p>
           <Translate>New User?</Translate>{' '}
-          <span style={{ color: '#add8e6', cursor: 'pointer', textDecoration: 'underline' }} onClick={() => navigate('/merchantsignup')}>
-            <Translate>SignUp</Translate>
-          </span>
+          <span className="linkish" onClick={() => navigate('/merchantsignup')}><Translate>SignUp</Translate></span>
         </p>
       </form>
       <Popup message={popupMessage} onClose={closePopup} />

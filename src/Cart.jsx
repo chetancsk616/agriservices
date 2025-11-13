@@ -125,19 +125,19 @@ const Cart = () => {
     <div className='scroll1'>
       <button
         type="button"
-        style={{ width: 'fit-content', backgroundColor: 'rgba(255, 255, 255, 0)', border: 'none', fontSize: '25px', color: 'white' }}
+        className="back-btn"
         onClick={() => navigate("/products")}
       >
         &larr;
       </button>
-      <h1 style={{ textAlign: 'center', color: 'white' }}><Translate>Your Cart</Translate></h1>
+      <h1 className="page-title"><Translate>Your Cart</Translate></h1>
 
-      <div id="cart-container" style={containerStyle}>
+      <div id="cart-container" className="cart-grid">
         {cartData === null ? (
-          <p style={{ color: 'white', gridColumn: '1 / -1', textAlign: 'center' }}><Translate>Your cart is empty.</Translate></p>
+          <p className="booking-empty"><Translate>Your cart is empty.</Translate></p>
         ) : (
           products.map((p, i) => (
-            <div className="cart-item" style={itemStyle} key={p.id}>
+            <div className="cart-item" key={p.id}>
               <h3>{p.name}</h3>
               <p><Translate>Price:</Translate> ₹{p.price}</p>
               <p>
@@ -153,7 +153,7 @@ const Cart = () => {
       </div>
 
       {cartData && products.length > 0 && (
-        <div className="cart-total" style={{ padding: '20px', fontWeight: 'bold', color: 'white', fontSize: '1.2rem' }}>
+        <div className="cart-total">
           <Translate>Total Price:</Translate> ₹{total}
         </div>
       )}

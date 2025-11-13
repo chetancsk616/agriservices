@@ -59,7 +59,7 @@ const HomePage = () => {
       case "4":
         return (
           <div className="back">
-            <h1 className="our" style={{ textAlign: "center" }}><Translate>About Us</Translate></h1>
+              <h1 className="our"><Translate>About Us</Translate></h1>
             <div className="aboutus">
               <section>
                 <h2><Translate>Rooted in the Soil, Growing with Technology</Translate></h2>
@@ -140,7 +140,7 @@ const HomePage = () => {
       </main>
 
       <footer className="footer">
-        <h1 style={{ textDecoration: "solid underline" }}><Translate>Contact Us</Translate></h1>
+        <h1 className="underline-solid"><Translate>Contact Us</Translate></h1>
         <div className="contact-details">
             <span><Translate>Gmail: chetancsk300@gmail.com</Translate></span>
             <span><Translate>PhoneNo: 7569493773</Translate></span>

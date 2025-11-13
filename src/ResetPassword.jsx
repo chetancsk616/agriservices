@@ -107,28 +107,13 @@ const ResetPassword = () => {
   };
 
   return (
-    <div style={containerStyle}>
-      <div style={boxStyle}>
-        <button
-          type="button"
-          style={{ width: 'fit-content', background: 'none', border: 'none', float: 'left', fontSize: '24px' }}
-          onClick={() => navigate(-1)}
-        >
-          <span style={{ color: 'black' }}>&larr;</span>
-        </button>
+    <div className="page-center">
+      <div className="reset-box">
+        <button type="button" className="back-btn" onClick={() => navigate(-1)}>&larr;</button>
 
         <h2><Translate>Reset Your Password</Translate></h2>
-        <input
-          type="password"
-          id="newPassword"
-          placeholder={placeholder}
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          style={inputStyle}
-        />
-        <button id="resetBtn" onClick={handleReset} style={buttonStyle}>
-          <Translate>Update Password</Translate>
-        </button>
+        <input type="password" id="newPassword" placeholder={placeholder} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+        <button id="resetBtn" className="btn-add" onClick={handleReset}><Translate>Update Password</Translate></button>
       </div>
 
       <Popup

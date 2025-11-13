@@ -119,10 +119,10 @@ const FarmerSignup = () => {
 
   return (
     <>
-      <form className="box" style={{ overflow: 'auto', height: 'calc(100vh - 268px)', scrollbarWidth: 'none' }}>
+      <form className="box box-scroll">
         <button
           type="button"
-          style={{ color: "white", width: "100%", backgroundColor: "rgba(255, 255, 255, 0)", border: "none", textAlign: "left", fontSize: "30px" }}
+          className="back-btn"
           onClick={() => navigate("/main/2")}
         >
           &larr;
@@ -161,7 +161,7 @@ const FarmerSignup = () => {
 
         <p>
           <Translate>Existing User?</Translate>{' '}
-          <span style={{ color: '#add8e6', cursor: 'pointer', textDecoration: 'underline' }} onClick={() => navigate('/farmerlogin')}>
+          <span className="linkish" onClick={() => navigate('/farmerlogin')}>
             <Translate>LogIn</Translate>
           </span>
         </p>

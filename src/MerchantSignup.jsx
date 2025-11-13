@@ -118,17 +118,10 @@ const MerchantSignup = () => {
 
   return (
     <>
-      <form className="box" style={{ overflow: 'auto', height: 'calc(100vh - 268px)', scrollbarWidth: 'none' }}>
+      <form className="box box-scroll">
         <button
           type="button"
-          style={{
-            color: "white",
-            width: "100%",
-            backgroundColor: "rgba(255, 255, 255, 0)",
-            border: "none",
-            textAlign: "left",
-            fontSize: "30px"
-          }}
+          className="back-btn"
           onClick={() => navigate(-1)}
         >
           &larr;
@@ -169,10 +162,7 @@ const MerchantSignup = () => {
 
         <p>
           <Translate>Existing User?</Translate>{' '}
-          <span
-            style={{ color: '#add8e6', cursor: 'pointer', textDecoration: 'underline' }}
-            onClick={() => navigate('/merchantlogin')}
-          >
+          <span className="linkish" onClick={() => navigate('/merchantlogin')}>
             <Translate>LogIn</Translate>
           </span>
         </p>
