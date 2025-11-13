@@ -1,5 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import axios from 'axios';
+import { LanguageContext } from './LanguageContext.jsx';
+import { translateText } from './translationService.js';
+import Translate from './Translation.jsx';
 // For a richer Markdown experience, you can install and use react-markdown
 // import ReactMarkdown from 'react-markdown'; 
 
@@ -48,6 +51,16 @@ export default function AIAssistantPage() {
     const [messages, setMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isInitialView, setIsInitialView] = useState(true);
+    const [placeholder, setPlaceholder] = useState('');
+    const { language } = useContext(LanguageContext);
+
+    useEffect(() => {
+        const getPlaceholder = async () => {
+            const text = await translateText('Ask a question or upload a crop photo...', language);
+            setPlaceholder(text);
+        };
+        getPlaceholder();
+    }, [language]);
     
     const messagesEndRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -168,7 +181,7 @@ export default function AIAssistantPage() {
                         <input
                             type="text"
                             className="flex-1 bg-transparent focus:outline-none text-lg placeholder-gray-500"
-                            placeholder="Ask a question or upload a crop photo..."
+                            placeholder={placeholder}
                             value={question}
                             onChange={(e) => setQuestion(e.target.value)}
                             disabled={isLoading}
